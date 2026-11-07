@@ -5,10 +5,17 @@ move items to "Done" (with the date) once finished.
 
 ## To do
 
-- [ ] **Fix the layout on phones.** The page is wider than a phone screen, so you have to scroll sideways
-  (the title, results table and CSV boxes overflow).
-- [ ] **Decide whether the Restaurant food box should be remembered/synced.** Up to v49 it deliberately
-  wasn't saved between visits, so it doesn't sync either.
+- [ ] **Nice, user-friendly mobile layout.** Right now the page is wider than a phone screen, so you have
+  to scroll sideways (the title, results table and CSV boxes overflow).
+- [ ] **Restaurant food box lasts until midnight.** When populated, it should survive reloads and closing
+  the page for the rest of the day, then clear itself at midnight. (Up to v49 it isn't saved at all.)
+  Open question: sync it across devices too, or keep it on the device where it was entered?
+- [ ] **Check the definition of "salad".** Minor – review how the code decides what counts as a salad.
+- [ ] **Change the sort options.** Details to decide when we get to it.
+- [ ] **Default breakfast → M&S porridge.**
+- [ ] **No shops ticked = no shopping trip.** In "Shops to consider", when no shops are selected, only show
+  combos that need no shop at all, i.e. made only from pre-purchased items, fast food and restaurant food
+  (where there is any).
 
 ## Done
 
