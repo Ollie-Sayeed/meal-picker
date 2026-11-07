@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-07T22:03:00.939Z",
+  "saved_at_iso": "2026-11-07T22:03:04.372Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -987,7 +987,12 @@
       "Frozen button sprouts,31,0.2,2.4,0.01,0.14,Sainsbury's,",
       ""
     ],
-    "snacksTodayText": "",
+    "snacksTodayText": [
+      "Kettle lightly salted,129,0.5,0.1,0.2,0.53,other,",
+      "Lightly sea salted,159,0.8,0.1,0.3,0.38,M&S,",
+      "Walkers hot honey,128,0.5,0.7,0.14,0.37,other,",
+      ""
+    ],
     "proteinSaltVersion": "low",
     "requirePrepCheck": false,
     "includeOliveOilCheck": true,
