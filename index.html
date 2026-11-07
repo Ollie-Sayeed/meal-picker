@@ -5354,7 +5354,7 @@ window.ListsSync = (()=>{
   function httpError(res, step){
     if(res.status===401) return new SyncError("GitHub rejected the token (expired or mistyped?) — paste it again in Sync settings");
     if(res.status===403 || res.status===404){
-      if(step==="save") return new SyncError("the token can read but not save — set its Contents permission to \"Read and write\" (error " + res.status + ")");
+      if(step==="save") return new SyncError("the token can read but not save — check its Contents permission is \"Read and write\" and that the Ollie-Sayeed organization has approved it (error " + res.status + ")");
       return new SyncError("the token can't see the meal-picker repo — under Repository access, choose \"Only select repositories\" and add meal-picker (error " + res.status + ")");
     }
     return new SyncError("GitHub error " + res.status + " while trying to " + step + " lists");
