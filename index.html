@@ -5350,10 +5350,14 @@ window.ListsSync = (()=>{
     if(opts.body) headers["Content-Type"] = "application/json";
     return fetch(API + path, {...opts, cache:"no-store", headers});
   }
-  function httpError(res){
-    if(res.status===401) return new SyncError("GitHub rejected the token — check it in Sync settings");
-    if(res.status===403 || res.status===404) return new SyncError("the token can't access the meal-picker repo — check its permissions");
-    return new SyncError("GitHub error " + res.status);
+  // step: "find" (look up the repo), "read" (load lists.json), "save" (write lists.json)
+  function httpError(res, step){
+    if(res.status===401) return new SyncError("GitHub rejected the token (expired or mistyped?) — paste it again in Sync settings");
+    if(res.status===403 || res.status===404){
+      if(step==="save") return new SyncError("the token can read but not save — set its Contents permission to \"Read and write\" (error " + res.status + ")");
+      return new SyncError("the token can't see the meal-picker repo — under Repository access, choose \"Only select repositories\" and add meal-picker (error " + res.status + ")");
+    }
+    return new SyncError("GitHub error " + res.status + " while trying to " + step + " lists");
   }
   function fail(e){
     console.warn("Sync failed:", e);
@@ -5364,7 +5368,7 @@ window.ListsSync = (()=>{
   async function ensureBranch(){
     if(branch) return branch;
     const res = await gh("");
-    if(!res.ok) throw httpError(res);
+    if(!res.ok) throw httpError(res, "find");
     branch = (await res.json()).default_branch;
     return branch;
   }
@@ -5373,7 +5377,7 @@ window.ListsSync = (()=>{
     const b = await ensureBranch();
     const res = await gh(`/contents/${FILE_PATH}?ref=${encodeURIComponent(b)}`);
     if(res.status===404) return null;
-    if(!res.ok) throw httpError(res);
+    if(!res.ok) throw httpError(res, "read");
     const j = await res.json();
     return {sha:j.sha, form:fromFile(b64decode(j.content))};
   }
@@ -5457,7 +5461,7 @@ window.ListsSync = (()=>{
         if(remote) body.sha = remote.sha; else delete body.sha;
         res = await put();
       }
-      if(!res.ok) throw httpError(res);
+      if(!res.ok) throw httpError(res, "save");
       markSynced((await res.json()).content.sha, json);
     }catch(e){ fail(e); }
     finally{
