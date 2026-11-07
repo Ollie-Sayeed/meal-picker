@@ -113,6 +113,10 @@ tr.group-summary{ cursor: pointer; }
 .click-ban-item.is-banned .click-ban-x{opacity:.7;}
 .click-ban-x{font-size:11px;line-height:1;color:#b91c1c;font-weight:700;}
 .click-ban-sep{color:inherit;}
+.sync-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:-8px;}
+#syncStatus[data-kind="ok"]{color:#15803d;}
+#syncStatus[data-kind="error"]{color:#b91c1c;}
+#syncStatus[data-kind="busy"],#syncStatus[data-kind="pending"]{color:#b45309;}
 
 </style>
 </head>
@@ -121,6 +125,12 @@ tr.group-summary{ cursor: pointer; }
   <div class="title">
     Meal Combo Generator
     <span class="small">— nutrition-aware supermarket combos</span>
+  </div>
+
+  <div class="sync-bar">
+    <span id="syncStatus" class="small">Sync: starting…</span>
+    <button class="smallbtn ghost" id="syncNowBtn" type="button">Sync now</button>
+    <button class="smallbtn ghost" id="syncSettingsBtn" type="button">Sync settings</button>
   </div>
 
   <div class="card out" id="resultsCard">
@@ -866,6 +876,8 @@ function saveState(){
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   }catch(e){}
+  // Let cross-device sync (bottom of file) know the lists may have changed.
+  if(window.ListsSync) window.ListsSync.onLocalSave();
 }
 
 function loadState(){
@@ -5258,6 +5270,255 @@ if(clickBanModeCheck){
     if(resultsEl && resultsEl.innerHTML.trim()) rerenderVisibleNonLockedCells();
   });
 }
+</script>
+
+<script>
+/* =====================================================================
+   CROSS-DEVICE SYNC (via GitHub)
+   The saved lists (the same fields localStorage keeps) are also stored in
+   lists.json in the meal-picker repo, so every device sees the same lists.
+   - Each device needs a GitHub fine-grained token (Contents: read & write on
+     meal-picker only), pasted in via "Sync settings". It stays on that device.
+   - Edits are pushed ~3s after typing stops, and when the page is hidden.
+   - On open / when returning to the page, the latest lists.json is pulled.
+   - If this device has edits that never reached GitHub, they win.
+   - Without a token the page reads lists.json from the site (read-only).
+   ===================================================================== */
+window.ListsSync = (()=>{
+  const OWNER = "Ollie-Sayeed", REPO = "meal-picker", FILE_PATH = "lists.json";
+  const API = `https://api.github.com/repos/${OWNER}/${REPO}`;
+  const CFG_KEY = "meal_picker_sync_cfg_v1";   // {token}
+  const META_KEY = "meal_picker_sync_meta_v1"; // {sha, syncedForm, dirty}
+  const PUSH_DELAY_MS = 3000;
+  const LIST_IDS = ["itemsText","snackItemsText","nutsItemsText","cerealItemsText","fastFoodItemsText","prepText","frozenText"];
+  const SESSION_TOGGLE_IDS = ["allowNutsCheck","allowCerealCheck","allowFastFoodCheck","proteinCheck"];
+
+  const statusEl = document.getElementById("syncStatus");
+  const readLS = (k)=>{ try{ return JSON.parse(localStorage.getItem(k) || "null"); }catch(e){ return null; } };
+  const writeLS = (k,v)=>{ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} };
+
+  let cfg = readLS(CFG_KEY) || {};
+  let meta = readLS(META_KEY) || {};
+  const saveMeta = ()=>writeLS(META_KEY, meta);
+
+  let branch = null, timer = null, busy = false, again = false, applying = false;
+
+  class SyncError extends Error{}
+  const hasToken = ()=>!!cfg.token;
+  const formJson = ()=>JSON.stringify(collectPersistedState());
+  const hasAnyList = ()=>LIST_IDS.some(id=>{ const el=document.getElementById(id); return el && el.value.trim(); });
+  const timeStr = ()=>new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+
+  function setStatus(text, kind){
+    statusEl.textContent = "Sync: " + text;
+    statusEl.dataset.kind = kind || "";
+  }
+
+  // lists.json stores multi-line lists as arrays of lines so it reads and diffs nicely.
+  function toFile(form){
+    const out = {};
+    for(const [k,v] of Object.entries(form)) out[k] = (typeof v==="string" && v.includes("\n")) ? v.split("\n") : v;
+    return JSON.stringify({version:1, saved_at_iso:new Date().toISOString(), form:out}, null, 2) + "\n";
+  }
+  function fromFile(text){
+    let parsed;
+    try{ parsed = JSON.parse(text); }catch(e){ throw new SyncError("lists.json is not valid JSON"); }
+    const out = {};
+    for(const [k,v] of Object.entries((parsed && parsed.form) || {})) out[k] = Array.isArray(v) ? v.join("\n") : v;
+    return out;
+  }
+
+  function b64encode(str){
+    const bytes = new TextEncoder().encode(str);
+    let bin = "";
+    for(let i=0;i<bytes.length;i+=0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i+0x8000));
+    return btoa(bin);
+  }
+  function b64decode(b64){
+    const bin = atob(b64.replace(/\s/g, ""));
+    const bytes = new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+
+  function gh(path, opts={}){
+    const headers = {
+      "Accept":"application/vnd.github+json",
+      "Authorization":`Bearer ${cfg.token}`,
+      "X-GitHub-Api-Version":"2022-11-28"
+    };
+    if(opts.body) headers["Content-Type"] = "application/json";
+    return fetch(API + path, {...opts, cache:"no-store", headers});
+  }
+  function httpError(res){
+    if(res.status===401) return new SyncError("GitHub rejected the token — check it in Sync settings");
+    if(res.status===403 || res.status===404) return new SyncError("the token can't access the meal-picker repo — check its permissions");
+    return new SyncError("GitHub error " + res.status);
+  }
+  function fail(e){
+    console.warn("Sync failed:", e);
+    if(e instanceof SyncError) setStatus(e.message, "error");
+    else setStatus("offline — saved on this device, will sync when back online", "error");
+  }
+
+  async function ensureBranch(){
+    if(branch) return branch;
+    const res = await gh("");
+    if(!res.ok) throw httpError(res);
+    branch = (await res.json()).default_branch;
+    return branch;
+  }
+
+  async function fetchRemote(){ // -> {sha, form} or null when lists.json doesn't exist yet
+    const b = await ensureBranch();
+    const res = await gh(`/contents/${FILE_PATH}?ref=${encodeURIComponent(b)}`);
+    if(res.status===404) return null;
+    if(!res.ok) throw httpError(res);
+    const j = await res.json();
+    return {sha:j.sha, form:fromFile(b64decode(j.content))};
+  }
+
+  // Put lists into the page. Mid-session, keep the "allow nuts/cereal/…" ticks as they are
+  // (applyPersistedState resets them to their defaults, which is right only on page load).
+  function applyForm(form, keepSessionToggles){
+    const kept = keepSessionToggles ? SESSION_TOGGLE_IDS.map(id=>{ const el=document.getElementById(id); return el ? el.checked : null; }) : null;
+    applying = true;
+    try{ applyPersistedState(form); saveState(); }
+    finally{ applying = false; }
+    if(kept) SESSION_TOGGLE_IDS.forEach((id,i)=>{ const el=document.getElementById(id); if(el && kept[i]!==null) el.checked = kept[i]; });
+  }
+
+  function markSynced(sha, json){
+    meta.sha = sha;
+    meta.syncedForm = json;
+    meta.dirty = formJson() !== json;
+    saveMeta();
+    if(meta.dirty) setStatus("unsaved changes…", "pending");
+    else setStatus("synced ✓ " + timeStr(), "ok");
+  }
+
+  async function pull(initial){
+    if(!hasToken()) return pullPublic(initial);
+    if(busy){ again = true; return; }
+    busy = true;
+    setStatus("checking for updates…", "busy");
+    let pushNeeded = false;
+    try{
+      const remote = await fetchRemote();
+      if(!remote){
+        meta.sha = null;
+        if(hasAnyList()){ meta.dirty = true; pushNeeded = true; }
+        else setStatus("on — no lists saved yet", "ok");
+      }else if(meta.dirty){
+        meta.sha = remote.sha;   // this device's unsynced edits win
+        pushNeeded = true;
+      }else{
+        if(initial || remote.sha !== meta.sha) applyForm(remote.form, !initial);
+        markSynced(remote.sha, formJson());
+      }
+      saveMeta();
+    }catch(e){ fail(e); }
+    finally{
+      busy = false;
+      if(pushNeeded || again){ again = false; push(); }
+    }
+  }
+
+  async function pullPublic(initial){
+    if(!initial || meta.dirty){ setStatus("off — lists saved on this device only", ""); return; }
+    try{
+      const res = await fetch(FILE_PATH, {cache:"no-store"});
+      if(!res.ok) throw new Error(String(res.status));
+      applyForm(fromFile(await res.text()), false);
+      meta.syncedForm = formJson(); meta.dirty = false; saveMeta();
+      setStatus("showing the saved lists (read-only) — add a token in Sync settings to save edits everywhere", "");
+    }catch(e){
+      setStatus("off — lists saved on this device only", "");
+    }
+  }
+
+  async function push(){
+    if(!hasToken()) return;
+    if(busy){ again = true; return; }
+    clearTimeout(timer); timer = null;
+    busy = true;
+    setStatus("saving…", "busy");
+    try{
+      const b = await ensureBranch();
+      const form = collectPersistedState();
+      const json = JSON.stringify(form);
+      const body = {message:"Update meal lists from the website", content:b64encode(toFile(form)), branch:b};
+      if(meta.sha) body.sha = meta.sha;
+      const put = ()=>gh(`/contents/${FILE_PATH}`, {method:"PUT", body:JSON.stringify(body)});
+      let res = await put();
+      if(res.status===409 || res.status===422){
+        // Our copy of lists.json was out of date (changed elsewhere): take the latest version id and overwrite.
+        const remote = await fetchRemote();
+        if(remote) body.sha = remote.sha; else delete body.sha;
+        res = await put();
+      }
+      if(!res.ok) throw httpError(res);
+      markSynced((await res.json()).content.sha, json);
+    }catch(e){ fail(e); }
+    finally{
+      busy = false;
+      if(again){ again = false; push(); }
+    }
+  }
+
+  function schedulePush(){
+    clearTimeout(timer);
+    timer = setTimeout(push, PUSH_DELAY_MS);
+  }
+
+  function onLocalSave(){
+    if(applying) return;
+    const dirty = formJson() !== meta.syncedForm;
+    if(!dirty && !meta.dirty) return;
+    meta.dirty = dirty; saveMeta();
+    if(!dirty){ clearTimeout(timer); timer = null; setStatus("synced ✓", "ok"); return; }
+    if(!hasToken()){ setStatus("saved on this device only — add a token in Sync settings to share with other devices", ""); return; }
+    setStatus("unsaved changes…", "pending");
+    schedulePush();
+  }
+
+  function openSettings(){
+    const msg = hasToken()
+      ? "Sync is ON for this device.\n\nPaste a new GitHub token to replace the saved one, or clear the box and press OK to turn sync off on this device."
+      : "Paste your GitHub access token to sync your lists across devices.\n\n(Fine-grained token, repository: meal-picker only, permission: Contents → Read and write.)";
+    const v = prompt(msg, hasToken() ? cfg.token : "");
+    if(v===null) return;
+    const t = v.trim();
+    cfg = t ? {token:t} : {};
+    writeLS(CFG_KEY, cfg);
+    branch = null;
+    if(t) pull(false);
+    else setStatus("off — lists saved on this device only", "");
+  }
+
+  document.getElementById("syncSettingsBtn").addEventListener("click", openSettings);
+  document.getElementById("syncNowBtn").addEventListener("click", ()=>{
+    if(!hasToken()) return openSettings();
+    if(meta.dirty) push(); else pull(false);
+  });
+
+  document.addEventListener("visibilitychange", ()=>{
+    if(document.visibilityState==="hidden"){
+      saveState();                                  // flush the 250ms local-save debounce
+      if(hasToken() && meta.dirty) push();          // and send edits before the page is put away
+    }else if(hasToken() && !busy && !timer){
+      pull(false);                                  // pick up edits made on another device
+    }
+  });
+  window.addEventListener("online", ()=>{ if(hasToken()) (meta.dirty ? push() : pull(false)); });
+
+  // First run with this feature on a device that already has lists (e.g. the old downloaded
+  // versions): treat them as unsynced edits so they get uploaded rather than overwritten.
+  if(meta.syncedForm===undefined && hasAnyList()){ meta.dirty = true; saveMeta(); }
+  pull(true);
+
+  return {onLocalSave, push, pull};
+})();
 </script>
 </body>
 </html>
