@@ -12,3 +12,7 @@ A single-page meal planning tool: everything (HTML, CSS, JS) lives in `index.htm
   the field names match `collectPersistedState()` in `index.html`.
 - If you add a new saved field, add it to `collectPersistedState()` / `applyPersistedState()` /
   `wirePersistence()`; it will sync automatically.
+
+## To-do list
+- `TODO.md` holds the user's backlog of tasks. When asked "what's next" or to add/finish a task,
+  read and update it (tick items off into "Done" with the date).
