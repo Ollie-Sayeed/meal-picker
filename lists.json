@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-07T22:02:57.959Z",
+  "saved_at_iso": "2026-11-07T22:03:00.939Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -981,7 +981,12 @@
       "Stamford Street Co salted peanuts,316,3.25,1.8,0.31,0.15,Sainsbury's,",
       ""
     ],
-    "frozenText": "",
+    "frozenText": [
+      "Frozen broccoli florets,28,0.1,1.3,0.01,0.1,Sainsbury's,",
+      "Frozen sliced carrots,30,0.1,3.8,0.03,0.09,Sainsbury's,",
+      "Frozen button sprouts,31,0.2,2.4,0.01,0.14,Sainsbury's,",
+      ""
+    ],
     "snacksTodayText": "",
     "proteinSaltVersion": "low",
     "requirePrepCheck": false,
