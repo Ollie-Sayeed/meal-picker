@@ -101,6 +101,35 @@ button.smallbtn.ghost{background:#fff}
   .btn-row{justify-content:flex-start}
 }
 
+/* ---------- One-column (phone / narrow) layout ----------
+   Order: results, banned items (after a search), the controls card, and the
+   rarely-edited CSV list boxes last, so day-to-day use needs little scrolling. */
+@media(max-width:900px){
+  .row{display:flex;flex-direction:column;}
+  .row>.section-stack:first-child{display:contents;}      /* let its cards be reordered individually */
+  #bannedCard{order:0;}
+  .row>.card.section-stack{order:1;}
+  .row>.section-stack:first-child>.card:not(#bannedCard){order:2;}
+}
+@media(max-width:600px){
+  body{display:block;padding:12px;}
+  .wrap{width:100%;gap:12px;}
+  .wrap>*,.row>*,.section-stack>*,.card *{min-width:0;}
+  .card{padding:12px;}
+  .title{font-size:22px;line-height:1.2;}
+  .title .small{display:block;}
+  .inline-fields>div{flex:1 1 140px;}
+  /* 16px stops iPhones zooming in when a field is tapped */
+  input[type="text"],input[type="number"],select,textarea{font-size:16px;}
+  button{padding:10px 14px;}
+  button.smallbtn{padding:8px 12px;}
+  .table-shell{overflow-x:auto;}
+  table.result-table{font-size:12px;}
+  .hint code{overflow-wrap:anywhere;}
+  /* keep one CSV row per line; long rows scroll sideways inside the box */
+  textarea{white-space:pre;overflow-wrap:normal;overflow-x:auto;}
+}
+
 
 tr.collapsed-child td:first-child{ padding-left: 22px; }
 tr.collapse-control td:first-child{ padding-left: 22px; font-style: italic; color: var(--muted); cursor: pointer; }
@@ -811,6 +840,7 @@ let LAST_EXPORT = {
 //   - Fast food CSV
 //   - Pre-purchased items
 //   - Frozen veg items
+//   - Sort choices (dropdown + the two "prioritise" tickboxes)
 //   - Restaurant food CSV, but only for the day it was entered (stamped with restaurantDate; cleared at midnight)
 // Everything else (calorie/budget inputs, shop ticks, locked items, results table, etc.) is session-only.
 const STORAGE_KEY = "meal_combo_generator_state_v32_csv_prep_frozen_only";
@@ -854,6 +884,9 @@ function collectPersistedState(){
     frozenText: getVal("frozenText"),
     snacksTodayText: getVal("snacksTodayText"),
     proteinSaltVersion: getVal("proteinSaltVersion") || "low",
+    sortMode: getVal("sortMode") || "item_count",
+    prioritiseRestaurant: !!(document.getElementById("prioritiseRestaurantCheck") && document.getElementById("prioritiseRestaurantCheck").checked),
+    prioritisePrep: !!(document.getElementById("prioritisePrepCheck") && document.getElementById("prioritisePrepCheck").checked),
     requirePrepCheck: !!(document.getElementById("requirePrepCheck") && document.getElementById("requirePrepCheck").checked),
     includeOliveOilCheck: !!(document.getElementById("includeOliveOilCheck") && document.getElementById("includeOliveOilCheck").checked),
     includeSpreadCheck: !!(document.getElementById("includeSpreadCheck") && document.getElementById("includeSpreadCheck").checked),
@@ -887,6 +920,12 @@ function applyPersistedState(st){
   setVal("frozenText", st.frozenText);
   setVal("snacksTodayText", st.snacksTodayText);
   setVal("proteinSaltVersion", st.proteinSaltVersion || "low");
+  // Sort choices (default: item count, both priorities on, for lists saved before these existed).
+  setVal("sortMode", (st.sortMode==="price" || st.sortMode==="item_count") ? st.sortMode : "item_count");
+  const prioritiseRestaurantEl = document.getElementById("prioritiseRestaurantCheck");
+  if(prioritiseRestaurantEl) prioritiseRestaurantEl.checked = (st.prioritiseRestaurant == null ? true : !!st.prioritiseRestaurant);
+  const prioritisePrepEl = document.getElementById("prioritisePrepCheck");
+  if(prioritisePrepEl) prioritisePrepEl.checked = (st.prioritisePrep == null ? true : !!st.prioritisePrep);
   const requirePrepCheckEl = document.getElementById("requirePrepCheck");
   if(requirePrepCheckEl) requirePrepCheckEl.checked = !!st.requirePrepCheck;
   const includeOliveOilCheckEl = document.getElementById("includeOliveOilCheck");
@@ -938,7 +977,7 @@ function scheduleSave(){
 function wirePersistence(){
   const restaurantEl = document.getElementById("restaurantItemsText");
   if(restaurantEl) restaurantEl.addEventListener("input", ()=>{ restaurantDay = restaurantEl.value.trim() ? todayStr() : ""; });
-  const ids = ["itemsText","snackItemsText","nutsItemsText","cerealItemsText","fastFoodItemsText","restaurantItemsText","prepText","frozenText","snacksTodayText","proteinSaltVersion","requirePrepCheck","includeOliveOilCheck","includeSpreadCheck","includeAvocadoCheck"];
+  const ids = ["itemsText","snackItemsText","nutsItemsText","cerealItemsText","fastFoodItemsText","restaurantItemsText","prepText","frozenText","snacksTodayText","proteinSaltVersion","sortMode","prioritiseRestaurantCheck","prioritisePrepCheck","requirePrepCheck","includeOliveOilCheck","includeSpreadCheck","includeAvocadoCheck"];
   for(const id of ids){
     const el=document.getElementById(id);
     if(!el) continue;

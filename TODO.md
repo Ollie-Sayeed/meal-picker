@@ -5,8 +5,7 @@ move items to "Done" (with the date) once finished.
 
 ## To do
 
-- [ ] **Nice, user-friendly mobile layout.** Right now the page is wider than a phone screen, so you have
-  to scroll sideways (the title, results table and CSV boxes overflow).
+_Nothing at the moment._
 
 ## Done
 
@@ -22,3 +21,6 @@ move items to "Done" (with the date) once finished.
 - [x] 2026-11-08 – Sort options unbundled: "Prioritise restaurant food" and "Prioritise pre-purchased items" tickboxes
   (ranked first), then Item count or Price; results always displayed in price order. Allowed toast/crumpets/muffins
   stay £0 and count as pre-purchased.
+- [x] 2026-11-08 – Sort choices (dropdown + prioritise tickboxes) are remembered and synced.
+- [x] 2026-11-08 – Mobile layout: fits the screen, one column with the controls before the CSV list boxes,
+  16px fields (no iPhone zoom), CSV rows don't wrap.
