@@ -1056,6 +1056,8 @@ function getDisplayNonLockedText(row){
 
 let LAST_CLICK_BAN_ITEM_ROWS = [];
 let CURRENT_CEREAL_DISPLAY_NAMES = new Set();
+// Names of today's restaurant food (set at the start of each search).
+let CURRENT_RESTAURANT_NAMES = new Set();
 let CURRENT_NUT_DISPLAY_NAMES = new Set();
 let CURRENT_OLIVE_OIL_LESS_HOUMOUS_DISPLAY_NAMES = new Set();
 
@@ -1995,7 +1997,8 @@ const TAG_EXCEPTIONS = {
     "pumpkin katsu curry with rice",
     "plant pioneers no chicken tikka masala with pilau rice",
     "bol teriyaki style rice bowl",
-    "suhana cuppa schezwan fried rice"
+    "suhana cuppa schezwan fried rice",
+    "vegetable tikka masala with pilau rice"
   ]),
   curryExactNames: new Set(["patak's potato and cauliflower curry"]),
   notCurryExactNames: new Set(["masala fries"]),
@@ -2184,6 +2187,13 @@ function tagItem(name){
   if(hasAny(TAG_EXCEPTIONS.notNaanKeywords)){ tags.is_bread_naan = false; tags.is_bread_naan_spread = false; tags.is_bread_any = false; }
   if(hasAny(TAG_EXCEPTIONS.notSoupKeywords)) tags.is_soup = false;
   if(tags.is_cereal) tags.is_nut = false;
+  // A restaurant dish like "Houmous with pitta" is a complete meal: it isn't houmous, pitta
+  // or bread, so it stands alone and doesn't license anything houmous/pitta would.
+  if(CURRENT_RESTAURANT_NAMES.has(raw.trim()) && (n.includes("houmous") || n.includes("hummus") || n.includes("humous"))){
+    tags.is_houmous = false; tags.is_houmous_without_olive_oil = false;
+    tags.is_pitta = false; tags.is_houmous_licensing_bread = false;
+    tags.is_bread_any = false; tags.is_bread_naan = false; tags.is_bread_naan_spread = false;
+  }
   return tags;
 }
 
@@ -2899,6 +2909,7 @@ function numberToWord(n){
 
 function getCollapseCueForItemName(name, cues){
   const rawName = String(name||"");
+  if(CURRENT_RESTAURANT_NAMES.has(rawName.trim())) return null;
   if(isMezzeRainbowHoumousSaladBowlName(rawName)) return null;
   const s = rawName.toLowerCase();
   const trimmedRaw = rawName.trim();
@@ -4385,6 +4396,10 @@ async function runSearch(){
   let cerealItemsArray=markRowsAsCereal(readItemsFromText(cerealItemsText, {enableSpreadVariants:false, enableOliveOilVariants:false}));
   let fastFoodItemsArray=markRowsAsFastFood(readItemsFromText(fastFoodItemsText, {enableSpreadVariants:false, enableOliveOilVariants:false}));
   let restaurantItemsArray=markRowsAsRestaurantFood(readItemsFromText(restaurantItemsText, {enableSpreadVariants:false, enableOliveOilVariants:false}));
+  // Tags for restaurant dishes differ (see tagItem), so refresh cached tags for old and new names.
+  CURRENT_RESTAURANT_NAMES.forEach(n=>{ delete GLOBAL_TAG_CACHE[n]; });
+  CURRENT_RESTAURANT_NAMES = new Set(restaurantItemsArray.map(it=>String(it.name||"").trim()).filter(Boolean));
+  CURRENT_RESTAURANT_NAMES.forEach(n=>{ delete GLOBAL_TAG_CACHE[n]; });
 
   itemsArray.forEach(it=>{
     if(it.shop==="Sainsbury’s")it.shop="Sainsbury's";

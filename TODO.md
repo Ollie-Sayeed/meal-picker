@@ -25,7 +25,6 @@ From the 2026-11-08 review:
 **Food groups**
 - [ ] Rice cereals (Rice Krispies, rice snaps, rice pops) and rice noodles count as rice, so need a curry/burrito.
 - [ ] "Potato" group includes sweet potato soups/burgers, potato farls and "Tortilla chips…" (one potato per combo).
-- [ ] Should "Vegetable tikka masala with pilau rice" stand alone like the no-chicken one?
 
 ## Done
 
@@ -48,3 +47,6 @@ From the 2026-11-08 review:
   no chicken tikka masala with pilau rice, Bol teriyaki rice bowl, Suhana cuppa fried rice); Masala fries not curry,
   Patak's potato and cauliflower curry is; Chips and curry sauce stands alone; tofu gyozas/Squeaky Bean slices not tofu;
   nut cereals not nuts; savoury chilli biscuits not chilli; burotis not naan/bread; Itsu soup dumplings not soup.
+- [x] 2026-11-08 – Vegetable tikka masala with pilau rice stands alone; burotis confirmed not curry. Restaurant dishes
+  mentioning houmous (e.g. "Houmous with pitta") aren't houmous, pitta or bread: they stand alone, license nothing,
+  and restaurant dishes are never grouped/collapsed with shop items.
