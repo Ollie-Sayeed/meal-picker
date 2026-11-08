@@ -372,13 +372,15 @@ tr.group-summary{ cursor: pointer; }
           <input id="kcalInput" type="number" step="1">
         </div>
         <div>
-          <label class="field-label" for="sortMode">Sort by</label>
+          <span class="field-label">Choose the top results by</span>
+          <label class="checkbox-label" style="font-size:12px;"><input id="prioritiseRestaurantCheck" type="checkbox" checked><span>Prioritise restaurant food</span></label>
+          <label class="checkbox-label" style="font-size:12px;margin:4px 0 6px;"><input id="prioritisePrepCheck" type="checkbox" checked><span>Prioritise pre-purchased items</span></label>
+          <label class="small" for="sortMode">then</label>
           <select id="sortMode">
-            <option value="price_within_default50" selected>Price including pre-purchased</option>
-            <option value="item_count_prep_first">Item count including pre-purchased</option>
-            <option value="item_count">Item count</option>
+            <option value="item_count" selected>Item count</option>
             <option value="price">Price</option>
           </select>
+          <div class="hint">Results are always shown in price order.</div>
         </div>
 <div>
           <label class="field-label" for="nutrientSlack">Nutrition leeway</label>
@@ -2700,7 +2702,12 @@ function computeItemCount(row){
   return s.split(" + ").length;
 }
 
-function sortResultsArray(arr,sortMode,prepNameSet,restaurantNameSet){
+// Choosing which results make the top N.
+// sortSpec = {by:"price"|"item_count", prioritiseRestaurant, prioritisePrep}.
+// Ticked priorities rank first (restaurant food, then pre-purchased items), then the
+// dropdown choice, then the other measure, then higher calories.
+function sortResultsArray(arr,sortSpec,prepNameSet,restaurantNameSet){
+  const spec = sortSpec || {by:"price"};
   const rowNames = (row)=>{
     const s = row && row.non_locked_items ? String(row.non_locked_items) : "";
     if(!s) return [];
@@ -2714,63 +2721,42 @@ function sortResultsArray(arr,sortMode,prepNameSet,restaurantNameSet){
     if(!restaurantNameSet || !restaurantNameSet.size) return false;
     return rowNames(row).some(n=>restaurantNameSet.has(n));
   };
+  const price = (r)=>(typeof r.total_price_gbp==="number"?r.total_price_gbp:Infinity);
+  const kcal = (r)=>(typeof r.total_kcal==="number"?r.total_kcal:-Infinity);
 
-  if(sortMode==="item_count_prep_first"){
-    arr.sort((a,b)=>{
-      const ac=computeItemCount(a),bc=computeItemCount(b);
-      if(ac!==bc)return ac-bc;
+  const keys = [];
+  if(spec.prioritiseRestaurant) keys.push((a,b)=>(hasAnyRestaurant(b)?1:0) - (hasAnyRestaurant(a)?1:0));
+  if(spec.prioritisePrep) keys.push((a,b)=>(hasAnyPrep(b)?1:0) - (hasAnyPrep(a)?1:0));
+  const byCount = (a,b)=>computeItemCount(a) - computeItemCount(b);
+  const byPrice = (a,b)=>price(a) - price(b);
+  if(spec.by==="item_count"){ keys.push(byCount, byPrice); }
+  else{ keys.push(byPrice, byCount); }
+  keys.push((a,b)=>kcal(b) - kcal(a));
 
-      const arest = hasAnyRestaurant(a) ? 1 : 0;
-      const brest = hasAnyRestaurant(b) ? 1 : 0;
-      if(arest!==brest) return brest - arest; // restaurant food first within each item-count bracket
-
-      const aprep = hasAnyPrep(a) ? 1 : 0;
-      const bprep = hasAnyPrep(b) ? 1 : 0;
-      if(aprep!==bprep) return bprep - aprep; // then pre-purchased items; neither comes last
-
-      const ap=(typeof a.total_price_gbp==="number"?a.total_price_gbp:Infinity);
-      const bp=(typeof b.total_price_gbp==="number"?b.total_price_gbp:Infinity);
-      if(ap!==bp)return ap-bp;
-
-      const ak=(typeof a.total_kcal==="number"?a.total_kcal:-Infinity);
-      const bk=(typeof b.total_kcal==="number"?b.total_kcal:-Infinity);
-      return bk-ak;
-    });
-  }else if(sortMode==="item_count"){
-    arr.sort((a,b)=>{
-      const ac=computeItemCount(a),bc=computeItemCount(b);
-      if(ac!==bc)return ac-bc;
-      const ap=(typeof a.total_price_gbp==="number"?a.total_price_gbp:Infinity);
-      const bp=(typeof b.total_price_gbp==="number"?b.total_price_gbp:Infinity);
-      if(ap!==bp)return ap-bp;
-      const ak=(typeof a.total_kcal==="number"?a.total_kcal:-Infinity);
-      const bk=(typeof b.total_kcal==="number"?b.total_kcal:-Infinity);
-      return bk-ak;
-    });
-  }else{
-    arr.sort((a,b)=>{
-      const ap=(typeof a.total_price_gbp==="number"?a.total_price_gbp:Infinity);
-      const bp=(typeof b.total_price_gbp==="number"?b.total_price_gbp:Infinity);
-      if(ap!==bp)return ap-bp;
-      const ak=(typeof a.total_kcal==="number"?a.total_kcal:-Infinity);
-      const bk=(typeof b.total_kcal==="number"?b.total_kcal:-Infinity);
-      return bk-ak;
-    });
-  }
+  arr.sort((a,b)=>{
+    for(const k of keys){ const d = k(a,b); if(d) return d; }
+    return 0;
+  });
 }
 
-function getSelectionSortMode(sortMode){
-  return sortMode === "price_within_default50" ? "item_count_prep_first" : sortMode;
+// Display order: always price (then higher calories), however the results were chosen.
+function sortResultsForDisplay(arr){
+  sortResultsArray(arr, {by:"price"});
 }
 
-function applyPostSliceDisplaySort(arr,sortMode,prepNameSet){
-  if(sortMode === "price_within_default50"){
-    // Keep the original display ordering for this mode: after the top results are
-    // selected using item-count/pre-purchased preference, display them by price.
-    // The only intended change is that item-count calculations now use effective
-    // counts that treat bundled items as one item.
-    sortResultsArray(arr,"price",prepNameSet);
+// Everything that counts as "pre-purchased" for prioritising: the pre-purchased rows,
+// their spread/avocado/no-olive-oil variants, and allowed toast/crumpets/muffins.
+function buildPrepNameSetForSort(prepRows, extraNames){
+  const set = new Set();
+  for(const it of (prepRows || [])){
+    if(!it || !it.name) continue;
+    set.add(it.name);
+    if(isSpreadableName(it.name)) set.add(makeWithSpreadName(it.name));
+    if(isAvocadoableName(it.name)) set.add(makeWithAvocadoName(it.name));
+    if(isWithOliveOilName(it.name)) set.add(makeWithoutOliveOilName(it.name));
   }
+  for(const n of (extraNames || [])) set.add(n);
+  return set;
 }
 
 // DISPLAY COLLAPSING (presentation-only; does not affect generation/sorting)
@@ -3573,17 +3559,7 @@ async function generateForShop(
   // Any item that alone exceeds a MAX constraint can never appear in a valid combo.
   // Exception: never prune pre-purchased items — the user has already bought them,
   // and the CSV version may have stale/different nutrition that would wrongly exclude them.
-  let prepNamesExact = new Set();
-  for(const it of prep){
-    if(!it || !it.name) continue;
-    prepNamesExact.add(it.name);
-    if(isSpreadableName(it.name)) prepNamesExact.add(makeWithSpreadName(it.name));
-    if(isAvocadoableName(it.name)) prepNamesExact.add(makeWithAvocadoName(it.name));
-    if(isWithOliveOilName(it.name)) prepNamesExact.add(makeWithoutOliveOilName(it.name));
-  }
-  if(typeof prepStyleMainMealNames !== "undefined"){
-    for(const n of prepStyleMainMealNames) prepNamesExact.add(n);
-  }
+  let prepNamesExact = buildPrepNameSetForSort(prep, (typeof prepStyleMainMealNames !== "undefined") ? prepStyleMainMealNames : []);
   const restaurantNamesExact = new Set((itemsArray || []).filter(isRestaurantFoodRow).map(it=>it && it.name).filter(Boolean));
   const requirePrepInEveryCombo = !!(inputsLocal && inputsLocal.require_prep_in_every_combo);
   const prepNamesAvailableForRequirement = new Set(prepNamesExact);
@@ -3684,7 +3660,8 @@ async function generateForShop(
   }
   let results=[],seenSets=new Set();
   let bestPriceCutoff = Infinity;
-  const _usePriceCutoff = (getSelectionSortMode(sortMode) === "price");
+  // Pruning by price is only safe when price alone decides the top results.
+  const _usePriceCutoff = (sortMode.by === "price" && !sortMode.prioritiseRestaurant && !sortMode.prioritisePrep);
   let pools=[feasibleMain];
   let pivots=[null];
 
@@ -4244,7 +4221,7 @@ async function enumerateExactSizes(){
     results.forEach(r=>{delete r.frozen_veg;});
   }
 
-  sortResultsArray(results,getSelectionSortMode(sortMode),prepNamesExact,restaurantNamesExact);
+  sortResultsArray(results,sortMode,prepNamesExact,restaurantNamesExact);
   results = results.slice(0,TOP_N_RESULTS);
   allVariantResults.push(...results);
   }
@@ -4301,7 +4278,11 @@ async function runSearch(){
 
   const budgetStr=String(document.getElementById("budgetInput").value||"");
   const kcalStr=String(document.getElementById("kcalInput").value||"");
-  const sortMode=document.getElementById("sortMode").value||"price_within_default50";
+  const sortMode={
+    by: (document.getElementById("sortMode").value==="price") ? "price" : "item_count",
+    prioritiseRestaurant: !!document.getElementById("prioritiseRestaurantCheck").checked,
+    prioritisePrep: !!document.getElementById("prioritisePrepCheck").checked
+  };
   const nutrientSlackStr=document.getElementById("nutrientSlack").value||"0";
   const unlimitedNutrition = (nutrientSlackStr === "none");
 
@@ -4904,7 +4885,7 @@ function buildLookup(arr){
       merged.forEach(r=>{delete r.frozen_veg;});
     }
 
-    const prepNameSetForSort = new Set((prepArray||[]).map(p=>p.name));
+    const prepNameSetForSort = buildPrepNameSetForSort(prepArray);
     const restaurantNameSetForSort = new Set((itemsArray||[]).filter(isRestaurantFoodRow).map(it=>it && it.name).filter(Boolean));
     for(const row of merged){
       const names = String(row && row.non_locked_items || "").split(" + ").map(x=>x.trim()).filter(Boolean);
@@ -4912,9 +4893,9 @@ function buildLookup(arr){
         if(isPrePurchasedStyleMainMealName(n, inputsLocal)) prepNameSetForSort.add(n);
       }
     }
-    sortResultsArray(merged,getSelectionSortMode(sortMode),prepNameSetForSort,restaurantNameSetForSort);
+    sortResultsArray(merged,sortMode,prepNameSetForSort,restaurantNameSetForSort);
     finalDf = merged.slice(0,TOP_N_RESULTS);
-    applyPostSliceDisplaySort(finalDf,sortMode,prepNameSetForSort);
+    sortResultsForDisplay(finalDf);
   }
 
 let resDf,stageSuffix;

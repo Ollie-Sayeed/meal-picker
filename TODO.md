@@ -7,8 +7,6 @@ move items to "Done" (with the date) once finished.
 
 - [ ] **Nice, user-friendly mobile layout.** Right now the page is wider than a phone screen, so you have
   to scroll sideways (the title, results table and CSV boxes overflow).
-- [ ] **Change the sort options.** Details to decide when we get to it.
-
 ## Done
 
 - [x] 2026-11-07 – Put the tool on GitHub as `index.html` (from v49, restaurant priority).
@@ -20,3 +18,6 @@ move items to "Done" (with the date) once finished.
   (plus always-at-home items – olive spread, burger relish, olive oil, Lotus Biscoff – and toast/crumpets/muffins
   if allowed; no avocado add-ons).
 - [x] 2026-11-08 – Plain Lotus Biscoff is always available (treated as permanently pre-purchased).
+- [x] 2026-11-08 – Sort options unbundled: "Prioritise restaurant food" and "Prioritise pre-purchased items" tickboxes
+  (ranked first), then Item count or Price; results always displayed in price order. Allowed toast/crumpets/muffins
+  stay £0 and count as pre-purchased.
