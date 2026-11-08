@@ -306,7 +306,7 @@ tr.group-summary{ cursor: pointer; }
             <label class="small" for="breakfastSelect">Porridge type</label>
             <select id="breakfastSelect">
               <option value="porridge_golden">Quaker Oat So Simple golden syrup x2</option>
-              <option value="porridge_maple">Maple syrup flavour porridge sachets x2 (M&amp;S)</option>
+              <option value="porridge_maple" selected>Maple syrup flavour porridge sachets x2 (M&amp;S)</option>
               <option value="crumpets_biscoff">Crumpets with Lotus Biscoff</option>
               <option value="english_muffin_biscoff">English muffins with Lotus Biscoff</option>
               <option value="toast_biscoff">Toast with Lotus Biscoff</option>
@@ -348,7 +348,7 @@ tr.group-summary{ cursor: pointer; }
           <label class="checkbox-label"><input type="checkbox" name="shopOption" value="M&S"> M&amp;S</label>
           <label class="checkbox-label"><input type="checkbox" name="shopOption" value="Waitrose"> Waitrose</label>
         </div>
-        <div class="hint">If none are ticked, all shops are allowed.</div>
+        <div class="hint">If none are ticked, nothing needs buying: only pre-purchased items, fast food and restaurant food are used.</div>
       </div>
 
       <div>
@@ -1045,10 +1045,15 @@ function isFastFoodRow(it){
   return !!(it && it._is_fast_food);
 }
 
+// What counts as "salad" (leaves). Used for the one-salad-per-combo rule, houmous pairing,
+// the pre-purchased salad restriction and display collapsing.
+// Not salad: the mezze houmous salad bowl, and "salads" that are really beans/pulses.
+const NOT_SALAD_KEYWORDS = ["four bean salad"];
 function isSaladName(name){
   if(isMezzeRainbowHoumousSaladBowlName(name)) return false;
-  const s = String(name || "").toLowerCase();
-  return s.includes("salad") || s.includes("rocket") || s.includes("leaf") || s.includes("watercress") || s.includes("pea shoots");
+  const s = String(name || "").toLowerCase().replace(/[’']/g, "");
+  if(NOT_SALAD_KEYWORDS.some(k => s.includes(k))) return false;
+  return s.includes("salad") || s.includes("rocket") || s.includes("leaf") || s.includes("watercress") || s.includes("pea shoots") || s.includes("lambs lettuce");
 }
 
 function isSaladRow(it){
@@ -2050,7 +2055,7 @@ function tagItem(name){
     is_olive_spread: n.includes("olive spread"),
     is_houmous: (!isMezzeRainbowHoumousSaladBowlName(raw) && (n.includes("houmous") || n.includes("hummus") || n.includes("humous")) && !n.includes("wrap")),
     is_houmous_without_olive_oil: (CURRENT_OLIVE_OIL_LESS_HOUMOUS_DISPLAY_NAMES && (CURRENT_OLIVE_OIL_LESS_HOUMOUS_DISPLAY_NAMES.has(raw.trim()) || CURRENT_OLIVE_OIL_LESS_HOUMOUS_DISPLAY_NAMES.has(base.trim()))),
-    is_salad: (!isMezzeRainbowHoumousSaladBowlName(raw) && (n.includes("salad") || n.includes("rocket") || n.includes("leaf") || n.includes("watercress") || n.includes("pea shoots"))),
+    is_salad: isSaladName(raw),
     is_cereal: (CURRENT_CEREAL_DISPLAY_NAMES && (CURRENT_CEREAL_DISPLAY_NAMES.has(raw.trim()) || CURRENT_CEREAL_DISPLAY_NAMES.has(base.trim()))),
     is_nut_box: (CURRENT_NUT_DISPLAY_NAMES && (CURRENT_NUT_DISPLAY_NAMES.has(raw.trim()) || CURRENT_NUT_DISPLAY_NAMES.has(base.trim()))),
     is_burger_relish: n.includes("burger relish"),
@@ -2540,8 +2545,16 @@ function getDisplayShop(it){
   return it && it.shop ? it.shop : "";
 }
 
-function baseMaskForShop(shopName,itemsArray){
+// Used as the "shop" when no shops are ticked: no shopping trip at all, so only food that
+// needs no shop is offered. Pre-purchased items are added to the pool separately (and so
+// stay available), as do always-available add-ons and toast/crumpets/muffins when allowed.
+const NO_SHOPPING = "no shopping";
+
+function baseMaskForShop(shopName,itemsArray,inputsLocal){
   const s=(shopName||"").trim();
+  if(s===NO_SHOPPING){
+    return itemsArray.filter(it=>isFastFoodRow(it) || isRestaurantFoodRow(it) || isPrePurchasedStyleMainMealName(getBaseDisplayName(it), inputsLocal));
+  }
   if(!s){
     return itemsArray.slice();
   }
@@ -2836,7 +2849,7 @@ function getCollapseCueForItemName(name, cues){
   if(s.includes("club mint") || s.includes("gold bar")) return "penguin";
   if(s.includes("free from") && s.includes("bar")) return "free from bar";
   if(s.includes("free from") && s.includes("buttons")) return "free from buttons";
-  if(s.includes("salad") || s.includes("rocket") || s.includes("leaf") || s.includes("watercress") || s.includes("pea shoots")) return "salad";
+  if(isSaladName(rawName)) return "salad";
   if(/\bbagels?\b/.test(s)) return "bagel";
   if(/\bbaguettes?\b/.test(s)) return "baguette";
   if(/\brolls\b/.test(s)) return "rolls";
@@ -3298,7 +3311,7 @@ async function generateForShop(
     const baseSalt = lockedVariant.baseSalt;
 
     // shop filter + only items with nutrition
-    let cand = baseMaskForShop(targetShop, itemsArray)
+    let cand = baseMaskForShop(targetShop, itemsArray, inputsLocal)
       .map(it=>repriceAvocadoVariantForShop(it, targetShop))
       .filter(it => it.hasNutrition && !isBannedItem(it, banConstraints));
 
@@ -3415,6 +3428,11 @@ async function generateForShop(
     for(const variantRow of getPrepAddOnVariantRows(r)){
       pushPrepCandidateToPool(variantRow);
     }
+  }
+
+  // No shopping: an avocado add-on would mean buying an avocado, so leave those variants out.
+  if(targetShop===NO_SHOPPING){
+    cand = cand.filter(it=>!it._avocado_parent_name);
   }
 
   // Remove locked items from the pool. Add-on siblings are one item family:
@@ -4288,7 +4306,7 @@ async function runSearch(){
   const proteinSaltVersion=(proteinSaltVersionEl && proteinSaltVersionEl.value === "high") ? "high" : "low";
 
   const checked=Array.from(document.querySelectorAll("input[name='shopOption']:checked")).map(cb=>cb.value);
-  let shopsList=checked.length?checked:[""];
+  let shopsList=checked.length?checked:[NO_SHOPPING];
   const searchTomorrow = !!(document.getElementById("searchTomorrowCheck") && document.getElementById("searchTomorrowCheck").checked);
   const planHigherExerciseDay = !!(document.getElementById("higherExerciseDayCheck") && document.getElementById("higherExerciseDayCheck").checked);
   if(searchTomorrow && planHigherExerciseDay){
