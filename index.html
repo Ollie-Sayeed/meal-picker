@@ -224,7 +224,7 @@ tr.group-summary{ cursor: pointer; }
         <label class="field-label" for="restaurantItemsText">Restaurant food CSV</label>
         <textarea id="restaurantItemsText" spellcheck="false"></textarea>
         <div class="hint">
-          Same columns as above. Restaurant food behaves like main items and counts as available for every selected shop. This box is not remembered between visits.
+          Same columns as above. Restaurant food behaves like main items and counts as available for every selected shop. This box is remembered (and synced to your other devices) for the rest of the day, and clears itself at midnight.
         </div>
       </div>
     </div>
@@ -804,8 +804,31 @@ let LAST_EXPORT = {
 //   - Fast food CSV
 //   - Pre-purchased items
 //   - Frozen veg items
+//   - Restaurant food CSV, but only for the day it was entered (stamped with restaurantDate; cleared at midnight)
 // Everything else (calorie/budget inputs, shop ticks, locked items, results table, etc.) is session-only.
 const STORAGE_KEY = "meal_combo_generator_state_v32_csv_prep_frozen_only";
+
+// RESTAURANT FOOD: kept for one day only.
+// restaurantDay = the local date (YYYY-MM-DD) the restaurant box's contents belong to ("" if empty).
+let restaurantDay = "";
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+// Called every minute and when the page comes back into view: once the day has rolled over,
+// empty the box. This is a local tidy-up, not an edit to sync (every device ignores stale
+// restaurant food anyway), so it must not overwrite food already entered today elsewhere;
+// with sync on, it then fetches the latest lists, which may include today's restaurant food.
+function checkRestaurantRollover(){
+  if(!restaurantDay || restaurantDay===todayStr()) return;
+  const clear = ()=>{
+    const el = document.getElementById("restaurantItemsText");
+    if(el) el.value = "";
+    restaurantDay = "";
+  };
+  if(window.ListsSync) window.ListsSync.localTidy(clear);
+  else{ clear(); saveState(); }
+}
 
 function collectPersistedState(){
   const getVal = (id)=>{
@@ -818,6 +841,8 @@ function collectPersistedState(){
     nutsItemsText: getVal("nutsItemsText"),
     cerealItemsText: getVal("cerealItemsText"),
     fastFoodItemsText: getVal("fastFoodItemsText"),
+    restaurantItemsText: getVal("restaurantItemsText"),
+    restaurantDate: getVal("restaurantItemsText").trim() ? (restaurantDay || todayStr()) : "",
     prepText: getVal("prepText"),
     frozenText: getVal("frozenText"),
     snacksTodayText: getVal("snacksTodayText"),
@@ -843,6 +868,14 @@ function applyPersistedState(st){
   setVal("nutsItemsText", st.nutsItemsText);
   setVal("cerealItemsText", st.cerealItemsText);
   setVal("fastFoodItemsText", st.fastFoodItemsText);
+  // Restaurant food only counts if it was entered today; anything older is treated as empty.
+  if(st.restaurantDate && st.restaurantDate===todayStr()){
+    setVal("restaurantItemsText", st.restaurantItemsText);
+    restaurantDay = st.restaurantDate;
+  }else{
+    setVal("restaurantItemsText", "");
+    restaurantDay = "";
+  }
   setVal("prepText", st.prepText);
   setVal("frozenText", st.frozenText);
   setVal("snacksTodayText", st.snacksTodayText);
@@ -896,7 +929,9 @@ function scheduleSave(){
 }
 
 function wirePersistence(){
-  const ids = ["itemsText","snackItemsText","nutsItemsText","cerealItemsText","fastFoodItemsText","prepText","frozenText","snacksTodayText","proteinSaltVersion","requirePrepCheck","includeOliveOilCheck","includeSpreadCheck","includeAvocadoCheck"];
+  const restaurantEl = document.getElementById("restaurantItemsText");
+  if(restaurantEl) restaurantEl.addEventListener("input", ()=>{ restaurantDay = restaurantEl.value.trim() ? todayStr() : ""; });
+  const ids = ["itemsText","snackItemsText","nutsItemsText","cerealItemsText","fastFoodItemsText","restaurantItemsText","prepText","frozenText","snacksTodayText","proteinSaltVersion","requirePrepCheck","includeOliveOilCheck","includeSpreadCheck","includeAvocadoCheck"];
   for(const id of ids){
     const el=document.getElementById(id);
     if(!el) continue;
@@ -5228,6 +5263,8 @@ function attachPicker(searchId,suggestionsId,textareaId,sourceTextAreaId){
 loadState();
 wirePersistence();
 wireAddonExclusivity();
+setInterval(checkRestaurantRollover, 60*1000);
+document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible") checkRestaurantRollover(); });
 
 function triggerRunSearch(){
   runSearch().catch(err=>{
@@ -5290,7 +5327,7 @@ window.ListsSync = (()=>{
   const CFG_KEY = "meal_picker_sync_cfg_v1";   // {token}
   const META_KEY = "meal_picker_sync_meta_v1"; // {sha, syncedForm, dirty}
   const PUSH_DELAY_MS = 3000;
-  const LIST_IDS = ["itemsText","snackItemsText","nutsItemsText","cerealItemsText","fastFoodItemsText","prepText","frozenText"];
+  const LIST_IDS = ["itemsText","snackItemsText","nutsItemsText","cerealItemsText","fastFoodItemsText","restaurantItemsText","prepText","frozenText"];
   const SESSION_TOGGLE_IDS = ["allowNutsCheck","allowCerealCheck","allowFastFoodCheck","proteinCheck"];
 
   const statusEl = document.getElementById("syncStatus");
@@ -5521,7 +5558,17 @@ window.ListsSync = (()=>{
   if(meta.syncedForm===undefined && hasAnyList()){ meta.dirty = true; saveMeta(); }
   pull(true);
 
-  return {onLocalSave, push, pull};
+  // Make a change that isn't a real edit (e.g. clearing yesterday's restaurant food at midnight):
+  // save it locally without marking anything as needing upload, then fetch the latest lists.
+  function localTidy(fn){
+    applying = true;
+    try{ fn(); saveState(); }
+    finally{ applying = false; }
+    if(!meta.dirty){ meta.syncedForm = formJson(); saveMeta(); }
+    if(hasToken()) pull(false);
+  }
+
+  return {onLocalSave, push, pull, localTidy};
 })();
 </script>
 </body>

@@ -7,9 +7,6 @@ move items to "Done" (with the date) once finished.
 
 - [ ] **Nice, user-friendly mobile layout.** Right now the page is wider than a phone screen, so you have
   to scroll sideways (the title, results table and CSV boxes overflow).
-- [ ] **Restaurant food box lasts until midnight.** When populated, it should survive reloads and closing
-  the page for the rest of the day, then clear itself at midnight. (Up to v49 it isn't saved at all.)
-  Open question: sync it across devices too, or keep it on the device where it was entered?
 - [ ] **Check the definition of "salad".** Minor – review how the code decides what counts as a salad.
 - [ ] **Change the sort options.** Details to decide when we get to it.
 - [ ] **Default breakfast → M&S porridge.**
@@ -21,3 +18,4 @@ move items to "Done" (with the date) once finished.
 
 - [x] 2026-11-07 – Put the tool on GitHub as `index.html` (from v49, restaurant priority).
 - [x] 2026-11-07 – Sync saved lists across devices via `lists.json` in the repo.
+- [x] 2026-11-08 – Restaurant food box is remembered and synced across devices for the rest of the day, and clears at midnight.
