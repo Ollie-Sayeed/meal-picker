@@ -412,7 +412,12 @@ const TOP_N_RESULTS = 50;
 // Used to cancel/ignore earlier runs if the user starts a new search.
 let ACTIVE_RUN_ID = 0;
 const EXCLUDE_PREFIX = "!";
+// Always at home (treated as permanently pre-purchased, even with no shops ticked).
+// Keywords match anywhere in an item name; exact names must match the whole (base) name,
+// so e.g. "Trek protein flapjack with Lotus Biscoff" is not swept in by "Lotus Biscoff".
+// (Olive oil needs no entry: it only appears as "… with olive oil" variants, at no extra cost.)
 const ALWAYS_AVAILABLE_KEYWORDS = ["olive spread", "burger relish"];
+const ALWAYS_AVAILABLE_EXACT_NAMES = new Set(["lotus biscoff"]);
 const SPREAD_DELTA = Object.freeze({kcal:38, sat:1.1, sugar:0.1, salt:0.11, price:0});
 const AVOCADO_DEFAULT_PRICE = 0.75;
 const AVOCADO_PRICE_BY_SHOP = Object.freeze({"Sainsbury's":0.88, "Tesco":0.95, "M&S":1.20});
@@ -3329,9 +3334,9 @@ async function generateForShop(
   }
 
   // inject always-available items from any shop
-  if(ALWAYS_AVAILABLE_KEYWORDS.length>0){
+  if(ALWAYS_AVAILABLE_KEYWORDS.length>0 || ALWAYS_AVAILABLE_EXACT_NAMES.size>0){
     let pat = new RegExp(ALWAYS_AVAILABLE_KEYWORDS.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|"),"i");
-    let specialRows = itemsArray.filter(it=>pat.test(it.name.toLowerCase()));
+    let specialRows = itemsArray.filter(it=>pat.test(it.name.toLowerCase()) || ALWAYS_AVAILABLE_EXACT_NAMES.has(getBaseDisplayName(it).toLowerCase()));
     for(let row of specialRows){
       // Compare by base name (without shop suffix) so that disambiguated
       // cross-shop duplicates (e.g. "olive spread (Sainsbury's)") are not
