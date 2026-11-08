@@ -8,6 +8,7 @@ move items to "Done" (with the date) once finished.
 - [ ] **Nice, user-friendly mobile layout.** Right now the page is wider than a phone screen, so you have
   to scroll sideways (the title, results table and CSV boxes overflow).
 - [ ] **Change the sort options.** Details to decide when we get to it.
+
 ## Done
 
 - [x] 2026-11-07 – Put the tool on GitHub as `index.html` (from v49, restaurant priority).
