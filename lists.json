@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-08T21:05:30.386Z",
+  "saved_at_iso": "2026-11-08T22:20:59.152Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -118,7 +118,7 @@
       "Plant Pioneers katsu-style no chicken fillets x2,604,7.2,2,2.46,1.79,Sainsbury’s,",
       "Plant Pioneers no chicken Kyivs x2,634,9.2,3.4,2,1.99,Sainsbury’s,",
       "No chicken Kyivs,692,10,3,3.72,3.75,M&S,",
-      "Mini no chicken Kyivs,950.4,12.6,4,5.69,5,M&S,",
+      "Mini no chicken Kyivs,950,12.6,4,5.69,5,M&S,",
       "Plant Chef meat-free no-chicken garlic Kievs x2,736,11.8,3.6,1.48,2.3,Tesco,",
       "Mushroom risotto,868,2.8,4.8,5.88,3.35,Tesco,",
       "!Greggs vegan sausage roll,271,6.7,1.5,1.5,0.88,Tesco,",
@@ -969,6 +969,8 @@
       "Large classic plant-based veg supreme (Pizza Hut),1642,37,21,7.9,12.00,Pizza Hut,",
       "Large pan plant-based veg supreme (Pizza Hut),2186,40,16,8.6,12.00,Pizza Hut,"
     ],
+    "restaurantItemsText": "",
+    "restaurantDate": "",
     "prepText": [
       "Diet Plant protein drink,92,0.2,0.1,0.86,0.93,other,",
       "Lotus Biscoff,74,1.2,6,0.14,0.11,other,",
