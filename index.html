@@ -1471,7 +1471,7 @@ const BREAKFAST_OPTIONS = [
   {
     id: "english_muffin_biscoff",
     name: "English muffin with Lotus Biscoff",
-    calories_kcal: 432,
+    calories_kcal: 388,
     sat_fat_g: 1.7,
     sugars_g: 13.5,
     salt_g: 0.82,
@@ -1985,6 +1985,28 @@ function computeExpiryAnyOfConstraint(prepList){
 }
 
 
+// TAGGING EXCEPTIONS
+// Food groups are mostly inferred from words in an item's name; these lists correct
+// the cases where that gets it wrong. Exact names are lower-case with straight apostrophes.
+const TAG_EXCEPTIONS = {
+  // Rice meals that stand alone (still "rice" for one-rice-per-combo and rice-vs-pasta,
+  // but they don't need a curry or burrito alongside them).
+  standaloneRiceMeals: new Set([
+    "pumpkin katsu curry with rice",
+    "plant pioneers no chicken tikka masala with pilau rice",
+    "bol teriyaki style rice bowl",
+    "suhana cuppa schezwan fried rice"
+  ]),
+  curryExactNames: new Set(["patak's potato and cauliflower curry"]),
+  notCurryExactNames: new Set(["masala fries"]),
+  notSauceExactNames: new Set(["chips and curry sauce"]),
+  notTofuKeywords: ["gyoza", "squeaky bean"],     // tofu gyozas, Squeaky Bean tofu slices
+  notChilliKeywords: ["biscuit"],                 // savoury chilli biscuits
+  notNaanKeywords: ["buroti"],                    // Urban Rajah burotis ("roti" inside "buroti")
+  notSoupKeywords: ["dumpling"]                   // Itsu vegetable soup dumplings
+  // Nut cereals are handled below: anything from the Cereal CSV is never "nuts".
+};
+
 // TAGGING & RULES (from v5)
 function tagItem(name){
   // Use base name for tagging so optional display disambiguation like " (Tesco)" or " (other)" never changes categories.
@@ -2149,6 +2171,19 @@ function tagItem(name){
   if(n.includes("graze chilli and lime nuts")){
     tags.is_chilli = false;
   }
+
+  // Name-based corrections (see TAG_EXCEPTIONS)
+  const nq = nt.replace(/[\u2019\u2018]/g, "'");
+  const hasAny = (keywords)=>keywords.some(k => nq.includes(k));
+  tags.is_standalone_rice_meal = tags.is_rice && TAG_EXCEPTIONS.standaloneRiceMeals.has(nq);
+  if(TAG_EXCEPTIONS.curryExactNames.has(nq)) tags.is_curry = true;
+  if(TAG_EXCEPTIONS.notCurryExactNames.has(nq)) tags.is_curry = false;
+  if(TAG_EXCEPTIONS.notSauceExactNames.has(nq)){ tags.is_sauce = false; tags.is_sauce_tomato_or_veg = false; tags.is_allowed_pasta_sauce = false; }
+  if(hasAny(TAG_EXCEPTIONS.notTofuKeywords)){ tags.is_tofu = false; tags.is_tofu_teriyaki = false; tags.is_tofu_dippers = false; }
+  if(hasAny(TAG_EXCEPTIONS.notChilliKeywords)) tags.is_chilli = false;
+  if(hasAny(TAG_EXCEPTIONS.notNaanKeywords)){ tags.is_bread_naan = false; tags.is_bread_naan_spread = false; tags.is_bread_any = false; }
+  if(hasAny(TAG_EXCEPTIONS.notSoupKeywords)) tags.is_soup = false;
+  if(tags.is_cereal) tags.is_nut = false;
   return tags;
 }
 
@@ -2300,6 +2335,8 @@ for(const n of mainNames){
 
 
   const has_rice = rice_count > 0;
+  // Rice that needs a curry/burrito alongside it (standalone rice meals don't).
+  const rice_needing_licence_count = tagsList.filter(t => t.is_rice && !t.is_standalone_rice_meal).length;
   const burrito_count = tagsList.filter(t => t.is_burrito).length;
   const has_burrito = burrito_count > 0;
   const curry_licensor_count = tagsList.filter(t => t.is_curry && !t.is_rice && !t.is_pastry_or_sandwich && !t.is_biryani_name).length;
@@ -2338,7 +2375,7 @@ for(const n of mainNames){
 
   // Rice normally needs its curry/burrito licensor. A tofu+scramble bundle is an
   // alternative licence, so rice may accompany that bundle without curry/burrito.
-  if(has_rice && !has_scramble_tofu_bundle && (curry_licensor_count + burrito_count) < rice_count)return false;
+  if(rice_needing_licence_count > 0 && !has_scramble_tofu_bundle && (curry_licensor_count + burrito_count) < rice_needing_licence_count)return false;
 
   // Scramble acts as the tofu flavour/licensing component, so sauce must not be
   // present in the same tofu+scramble combination.
@@ -2463,7 +2500,7 @@ for(const n of mainNames){
     // count as non-solid bread licensors; any remaining rice demand consumes curry/non-solid units.
     const rice_licenses_consuming_non_solid = Math.min(
       raw_non_solid_count,
-      Math.max(0, rice_count - burrito_count)
+      Math.max(0, rice_needing_licence_count - burrito_count)
     );
 
     // A valid tofu + Scramble ingredients bundle contributes one additional bread licensor.
