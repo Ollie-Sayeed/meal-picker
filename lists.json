@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-07T22:03:04.372Z",
+  "saved_at_iso": "2026-11-08T21:05:30.386Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -979,6 +979,7 @@
       "Penguin Caramel,130,3.8,10.2,0.05,0.29,Sainsbury's,",
       "Coco Shreddies,369,0.8,22.2,0.61,0.58,other,",
       "Stamford Street Co salted peanuts,316,3.25,1.8,0.31,0.15,Sainsbury's,",
+      "After Eights x2,73,1.3,11.5,0.01,0.24,other,",
       ""
     ],
     "frozenText": [
