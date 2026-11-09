@@ -123,8 +123,20 @@ button.smallbtn.ghost{background:#fff}
   input[type="text"],input[type="number"],select,textarea{font-size:16px;}
   button{padding:10px 14px;}
   button.smallbtn{padding:8px 12px;}
-  .table-shell{overflow-x:auto;}
-  table.result-table{font-size:12px;}
+  /* Results as cards: items on a full-width line, labelled numbers underneath */
+  table.result-table{table-layout:auto;font-size:13px;}
+  table.result-table thead{display:none;}
+  table.result-table tbody{display:block;}
+  table.result-table tbody tr{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 14px;padding:8px 10px;border-bottom:1px solid var(--border);}
+  table.result-table tbody td,
+  table.result-table tbody td.num,
+  table.result-table tbody td.shopcol{display:block;padding:0;width:auto;min-width:0;max-width:none;text-align:left;}
+  table.result-table tbody td.col-non_locked_items{flex:1 1 100%;font-size:14px;}
+  table.result-table tbody td[data-label]::before{content:attr(data-label) " ";color:var(--muted);font-size:11px;}
+  table.result-table tbody td.col-total_price_gbp{font-weight:700;}
+  table.result-table tbody td.col-total_price_gbp::before{content:"£";color:inherit;font-size:inherit;}
+  table.result-table tbody td.shopcol{overflow:visible;}
+  tr.collapsed-child td:first-child{padding-left:12px;}
   .hint code{overflow-wrap:anywhere;}
   /* keep one CSV row per line; long rows scroll sideways inside the box */
   textarea{white-space:pre;overflow-wrap:normal;overflow-x:auto;}
@@ -5166,9 +5178,9 @@ for(let col of columns){
         // When expanded: hide summary row, show child rows.
         // When collapsed: show summary row, hide child rows.
 
-        tr.style.display = isExpanded ? "table-row" : "none";
+        tr.style.display = isExpanded ? "" : "none";
         tbody.querySelectorAll(`tr.child-row[data-group-id="${gid}"]`).forEach(r=>{
-          r.style.display = isExpanded ? "none" : "table-row";
+          r.style.display = isExpanded ? "none" : "";
         });
       });
     });
@@ -5180,10 +5192,22 @@ for(let col of columns){
         const summary = tbody.querySelector(`tr.group-summary[data-group-id="${gid}"]`);
         if(!summary) return;
         summary.dataset.expanded = "0";
-        summary.style.display = "table-row";
+        summary.style.display = "";
         tbody.querySelectorAll(`tr.child-row[data-group-id="${gid}"]`).forEach(r=>{
           r.style.display = "none";
         });
+      });
+    });
+
+    // Column class + short label on every cell (used by the phone layout, where each
+    // result is shown as a card with labelled numbers instead of a table row).
+    const MOBILE_COL_LABELS = {total_price_gbp:"£", total_kcal:"kcal", sat_RI_pct:"Sat fat", sugars_RI_pct:"Sugars", salt_RI_pct:"Salt", frozen_veg:"Frozen veg", shop:"Shop"};
+    tbody.querySelectorAll("tr").forEach(tr=>{
+      Array.from(tr.children).forEach((cell,idx)=>{
+        const col = columns[idx];
+        if(!col) return;
+        cell.classList.add("col-" + col);
+        if(MOBILE_COL_LABELS[col]) cell.dataset.label = MOBILE_COL_LABELS[col];
       });
     });
 

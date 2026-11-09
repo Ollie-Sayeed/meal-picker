@@ -50,3 +50,5 @@ From the 2026-11-08 review:
 - [x] 2026-11-08 – Vegetable tikka masala with pilau rice stands alone; burotis confirmed not curry. Restaurant dishes
   mentioning houmous (e.g. "Houmous with pitta") aren't houmous, pitta or bread: they stand alone, license nothing,
   and restaurant dishes are never grouped/collapsed with shop items.
+- [x] 2026-11-09 – Phone results shown as cards (items full width, labelled £/kcal/sat fat/sugars/salt underneath)
+  instead of a squeezed table.
