@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-09T19:11:14.391Z",
+  "saved_at_iso": "2026-11-09T19:11:18.694Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -993,6 +993,7 @@
     "snacksTodayText": [
       "Walkers ready salted,130,0.6,0.1,0.34,0.27,other,",
       "Ready salted,136,0.8,0.5,0.5,0.18,Sainsbury's,",
+      "McCoy's Cheddar and onion,132,0.6,0.6,0.24,0.39,other,",
       ""
     ],
     "proteinSaltVersion": "low",
