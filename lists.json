@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-09T21:08:32.686Z",
+  "saved_at_iso": "2026-11-09T21:09:44.806Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -969,28 +969,8 @@
       "Large classic plant-based veg supreme (Pizza Hut),1642,37,21,7.9,12.00,Pizza Hut,",
       "Large pan plant-based veg supreme (Pizza Hut),2186,40,16,8.6,12.00,Pizza Hut,"
     ],
-    "restaurantItemsText": [
-      "Cheap Hoddesdon food\\",
-      "\\",
-      "Small chips (The Captain’s),450,4.5,1,1.2,3.5,The Captain’s\\",
-      "\\",
-      "Large chips (The Captain’s),750,7.5,1.5,2,4.95,The Captain’s\\",
-      "\\",
-      "Small chips with curry sauce (The Captain’s),550,5,5,2,5.7,The Captain’s,\\",
-      "\\",
-      "Large chips with curry sauce (The Captain’s),850,8,5.5,2.8,7.15,The Captain’s,\\",
-      "\\",
-      "Half small chips with full curry sauce (The Captain’s),325,2.8,4.5,1.5,3.95,The Captain’s\\",
-      "\\",
-      "Half large chips with full curry sauce (The Captain’s’),475,4.3,4.8,1.9,4.68,The Captain’s,\\",
-      "\\",
-      "Chip butty (The Captain’s),550,5.5,3,1.5,3.5,The Captain’s,\\",
-      "\\",
-      "Battered Mars bar (The Captain’s),350,5,30,0.3,3,The Captain’s,\\",
-      "\\",
-      "Ten onion rings (The Captain’s),350,3,5,1.2,2.5,The Captain’s,"
-    ],
-    "restaurantDate": "2026-11-09",
+    "restaurantItemsText": "",
+    "restaurantDate": "",
     "prepText": [
       "Diet Plant protein drink,92,0.2,0.1,0.86,0.93,other,",
       "Lotus Biscoff,74,1.2,6,0.14,0.11,other,",
