@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-09T06:34:49.952Z",
+  "saved_at_iso": "2026-11-09T19:11:14.391Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -991,9 +991,8 @@
       ""
     ],
     "snacksTodayText": [
-      "Kettle lightly salted,129,0.5,0.1,0.2,0.53,other,",
-      "Lightly sea salted,159,0.8,0.1,0.3,0.38,M&S,",
-      "Walkers hot honey,128,0.5,0.7,0.14,0.37,other,",
+      "Walkers ready salted,130,0.6,0.1,0.34,0.27,other,",
+      "Ready salted,136,0.8,0.5,0.5,0.18,Sainsbury's,",
       ""
     ],
     "proteinSaltVersion": "low",
