@@ -63,6 +63,8 @@ table.result-table tbody tr.stripe-odd{background:#fff;}
 table.result-table tbody tr:hover{background:#e0f2fe;}
 .group-summary{cursor:pointer;}
 .collapsed-child{display:none;}
+.collapsed-child.is-open{display:table-row;}
+tr.group-summary.is-hidden{display:none;}
 .group-summary .toggle{display:inline-block;min-width:16px;color:var(--muted);font-weight:800;}
 .child-row td{padding-left:1.4rem;}
 table.result-table td:not(.num),table.result-table th:not(.num){overflow-wrap:anywhere;}
@@ -137,6 +139,9 @@ button.smallbtn.ghost{background:#fff}
   table.result-table tbody td.col-total_price_gbp::before{content:"£";color:inherit;font-size:inherit;}
   table.result-table tbody td.shopcol{overflow:visible;}
   tr.collapsed-child td:first-child{padding-left:12px;}
+  table.result-table tbody tr.collapsed-child{display:none;}
+  table.result-table tbody tr.collapsed-child.is-open{display:flex;}
+  table.result-table tbody tr.group-summary.is-hidden{display:none;}
   .hint code{overflow-wrap:anywhere;}
   /* keep one CSV row per line; long rows scroll sideways inside the box */
   textarea{white-space:pre;overflow-wrap:normal;overflow-x:auto;}
@@ -5145,7 +5150,6 @@ for(let col of columns){
         for(const childRow of entry.childrenRows){
           const ctr=document.createElement("tr");
           ctr.classList.add("collapsed-child","child-row", stripeClass);
-          ctr.style.display="none";
           ctr.dataset.groupId = gid;
           for(const col of columns){
             const td=document.createElement("td");
@@ -5178,9 +5182,9 @@ for(let col of columns){
         // When expanded: hide summary row, show child rows.
         // When collapsed: show summary row, hide child rows.
 
-        tr.style.display = isExpanded ? "" : "none";
+        tr.classList.toggle("is-hidden", !isExpanded);
         tbody.querySelectorAll(`tr.child-row[data-group-id="${gid}"]`).forEach(r=>{
-          r.style.display = isExpanded ? "none" : "";
+          r.classList.toggle("is-open", !isExpanded);
         });
       });
     });
@@ -5192,9 +5196,9 @@ for(let col of columns){
         const summary = tbody.querySelector(`tr.group-summary[data-group-id="${gid}"]`);
         if(!summary) return;
         summary.dataset.expanded = "0";
-        summary.style.display = "";
+        summary.classList.remove("is-hidden");
         tbody.querySelectorAll(`tr.child-row[data-group-id="${gid}"]`).forEach(r=>{
-          r.style.display = "none";
+          r.classList.remove("is-open");
         });
       });
     });
