@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-10T21:06:53.433Z",
+  "saved_at_iso": "2026-11-10T21:08:00.234Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -971,13 +971,7 @@
     ],
     "restaurantItemsText": [
       "Cheap Hoddesdon food",
-      "Small chips (The Captain’s),450,3.5,1,1,3.5,The Captain’s",
-      "Large chips (The Captain’s),700,5.5,2,1.5,4.95,The Captain’s",
-      "Small chips with curry sauce (The Captain’s),550,4,5,2,5.7,The Captain’s,",
-      "Large chips with curry sauce (The Captain’s),800,6,6,2.5,7.15,The Captain’s,",
-      "Half small chips with full curry sauce (The Captain’s),350,2.5,5,1.5,3.95,The Captain’s",
       "Half large chips with full curry sauce (The Captain’s),475,3.5,5.5,1.8,4.68,The Captain’s,",
-      "Chip butty (The Captain’s),550,4,3,1.5,3.5,The Captain’s,",
       "Battered Mars bar (The Captain’s),350,6,30,0.3,3,The Captain’s,",
       "Ten onion rings (The Captain’s),350,2.5,4,1,2.5,The Captain’s,",
       "Salad in pitta (Herts Plaice),200,0.5,5,0.7,4,Herts Plaice,",
