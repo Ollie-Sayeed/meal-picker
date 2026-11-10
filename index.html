@@ -2907,6 +2907,7 @@ function cueLabelFromCue(cue){
   if(c==="free from buttons") return "Free From buttons";
   if(c==="nut selection") return "Nut selection";
   if(c==="cereal") return "Cereal";
+  if(c==="naan") return "Naan";
   if(c==="bagel") return "Bagels";
   if(c==="baguette") return "Baguette";
   if(c==="rolls") return "Rolls";
@@ -2922,6 +2923,13 @@ function numberToWord(n){
   };
   if(n in map) return map[n];
   return String(n);
+}
+
+function isNaanGroupName(lowerName){
+  const s = String(lowerName || "").toLowerCase();
+  if(/\bspiced rotis?\b/.test(s)) return true;
+  if(!/\bnaans?\b/.test(s)) return false;
+  return !(/\bmini\b/.test(s) || /\bx\s*4\b/.test(s));
 }
 
 function getCollapseCueForItemName(name, cues){
@@ -2945,6 +2953,12 @@ function getCollapseCueForItemName(name, cues){
   if(s.includes("free from") && s.includes("bar")) return "free from bar";
   if(s.includes("free from") && s.includes("buttons")) return "free from buttons";
   if(isSaladName(rawName)) return "salad";
+  // Naan group (display collapsing + click-to-ban the whole group). Full-size naan come in
+  // packs of two, so eating one commits you to the second within 24 hours; banning [Naan]
+  // avoids that. Four-packs of mini naan are eaten all at once, so they are left out of this
+  // group (they are still naan for every generation rule via is_bread_naan). Spiced rotis are
+  // eaten two at a time, so they join the group. "buroti" is excluded by the word boundary.
+  if(isNaanGroupName(s)) return "naan";
   if(/\bbagels?\b/.test(s)) return "bagel";
   if(/\bbaguettes?\b/.test(s)) return "baguette";
   if(/\brolls\b/.test(s)) return "rolls";
