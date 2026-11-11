@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-11T06:40:08.453Z",
+  "saved_at_iso": "2026-11-11T15:16:04.028Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -971,9 +971,7 @@
     ],
     "restaurantItemsText": [
       "Cheap Hoddesdon food",
-      "Small chips (The Captain’s),450,3.5,1,0.8,3.5,The Captain’s",
-      "Large chips (The Captain’s),700,5.5,2,1.2,4.95,The Captain’s",
-      "Small chips with curry sauce (The Captain’s),530,4,5,1.7,5.7,The Captain’s,",
+      "",
       "Large chips with curry sauce (The Captain’s),780,6,6,2.1,7.15,The Captain’s,",
       "Half small chips with full curry sauce (The Captain’s),310,2.5,5,1.3,3.95,The Captain’s",
       "Half large chips with full curry sauce (The Captain’s),435,3.5,5.5,1.5,4.68,The Captain’s,",
