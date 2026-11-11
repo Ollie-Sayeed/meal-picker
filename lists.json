@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-11T20:53:37.339Z",
+  "saved_at_iso": "2026-11-11T20:55:06.621Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -969,20 +969,8 @@
       "Large classic plant-based veg supreme (Pizza Hut),1642,37,21,7.9,12.00,Pizza Hut,",
       "Large pan plant-based veg supreme (Pizza Hut),2186,40,16,8.6,12.00,Pizza Hut,"
     ],
-    "restaurantItemsText": [
-      "Cheap Hoddesdon food",
-      "Half large chips with full curry sauce (The Captain’s),435,3.5,5.5,1.5,4.68,The Captain’s,",
-      "Battered Mars bar (The Captain’s),330,6,31,0.3,3,The Captain’s,",
-      "Ten onion rings (The Captain’s),350,2.5,5,1.2,2.5,The Captain’s,",
-      "Salad in pitta (Herts Plaice),220,0.5,5,0.7,4,Herts Plaice,",
-      "Chips in pitta (Herts Plaice),500,3.5,3,1,4,Herts Plaice,",
-      "Chips in pitta and salad (Herts Plaice),530,3.5,5,1.1,5,Herts Plaice,",
-      "Vegetarian kebab (Herts Plaice),300,1.5,7,1.1,4.9,Herts Plaice,",
-      "Hummus with pitta (Herts Plaice),330,1.5,3,1,3.5,Herts Plaice,",
-      "Onion rings (Herts Plaice),300,2,4,1,4,Herts Plaice,",
-      "Garlic mushrooms (Herts Plaice),280,2,3,0.8,4.9,Herts Plaice,"
-    ],
-    "restaurantDate": "2026-11-11",
+    "restaurantItemsText": "",
+    "restaurantDate": "",
     "prepText": [
       "Diet Plant protein drink,92,0.2,0.1,0.86,0.93,other,",
       "Lotus Biscoff,74,1.2,6,0.14,0.11,other,",
