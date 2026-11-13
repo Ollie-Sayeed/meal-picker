@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-12T15:41:57.742Z",
+  "saved_at_iso": "2026-11-13T06:27:36.481Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -969,32 +969,8 @@
       "Large classic plant-based veg supreme (Pizza Hut),1642,37,21,7.9,12.00,Pizza Hut,",
       "Large pan plant-based veg supreme (Pizza Hut),2186,40,16,8.6,12.00,Pizza Hut,"
     ],
-    "restaurantItemsText": [
-      "Cheap Hoddesdon food",
-      "Small chips (The Captain’s),450,3.5,1,0.8,3.5,The Captain’s",
-      "Large chips (The Captain’s),700,5.5,1.5,1.2,4.95,The Captain’s",
-      "Small chips with curry sauce (The Captain’s),550,4,5,1.8,5.7,The Captain’s,",
-      "Large chips with curry sauce (The Captain’s),800,6,5.5,2.2,7.15,The Captain’s,",
-      "Half small chips with full curry sauce (The Captain’s),350,2.5,8,1.8,3.95,The Captain’s",
-      "Half large chips with full curry sauce (The Captain’s),480,3.5,8,2,4.68,The Captain’s,",
-      "Chip butty (The Captain’s),500,3.5,3,1,3.5,The Captain’s,",
-      "Battered Mars bar (The Captain’s),350,7,30,0.3,3,The Captain’s,",
-      "Ten onion rings (The Captain’s),350,3,4,1,2.5,The Captain’s,",
-      "Salad in pitta (Herts Plaice),200,0.5,5,0.6,4,Herts Plaice,",
-      "Chips in pitta (Herts Plaice),500,3.5,3,1,4,Herts Plaice,",
-      "Chips in pitta and salad (Herts Plaice),530,3.5,5,1.1,5,Herts Plaice,",
-      "Vegetarian kebab (Herts Plaice),350,1.5,7,1.2,4.9,Herts Plaice,",
-      "Hummus with pitta (Herts Plaice),300,1.5,3,0.8,3.5,Herts Plaice,",
-      "Onion rings (Herts Plaice),350,3,4,1,4,Herts Plaice,",
-      "Garlic mushrooms (Herts Plaice),300,2.5,2,0.8,4.9,Herts Plaice,",
-      "Small chips (Herts Plaice),450,3.5,1,0.8,3.2,Herts Plaice,",
-      "Small chips with curry sauce (Herts Plaice),550,4,5,1.8,5.7,Herts Plaice,",
-      "Large chips (Herts Plaice),700,5.5,1.5,1.2,4.2,Herts Plaice,",
-      "Large chips with curry sauce (Herts Plaice),800,6,5.5,2.2,6.7,Herts Plaice,",
-      "Large falafel wrap,600,3,8,2,8,market,",
-      "Vegan dry noodles,500,2,6,2,8,market,"
-    ],
-    "restaurantDate": "2026-11-12",
+    "restaurantItemsText": "",
+    "restaurantDate": "",
     "prepText": [
       "Diet Plant protein drink,92,0.2,0.1,0.86,0.93,other,",
       "Lotus Biscoff,74,1.2,6,0.14,0.11,other,",
@@ -1024,7 +1000,7 @@
       ""
     ],
     "proteinSaltVersion": "low",
-    "sortMode": "item_count",
+    "sortMode": "price",
     "prioritiseRestaurant": false,
     "prioritisePrep": false,
     "requirePrepCheck": false,
