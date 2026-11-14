@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-13T16:10:19.945Z",
+  "saved_at_iso": "2026-11-14T07:19:44.937Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -969,50 +969,8 @@
       "Large classic plant-based veg supreme (Pizza Hut),1642,37,21,7.9,12.00,Pizza Hut,",
       "Large pan plant-based veg supreme (Pizza Hut),2186,40,16,8.6,12.00,Pizza Hut,"
     ],
-    "restaurantItemsText": [
-      "Cheap Hoddesdon food",
-      "",
-      "Small chips (The Captain’s),400,1.5,0.5,0.5,3.5,The Captain’s",
-      "",
-      "Large chips (The Captain’s),650,2.5,0.8,0.8,4.95,The Captain’s",
-      "",
-      "Small chips with curry sauce (The Captain’s),490,2,3.5,1.5,5.7,The Captain’s,",
-      "",
-      "Large chips with curry sauce (The Captain’s),740,3,3.8,1.8,7.15,The Captain’s,",
-      "",
-      "Half small chips with full curry sauce (The Captain’s),290,1.3,3.3,1.3,3.95,The Captain’s",
-      "",
-      "Half large chips with full curry sauce (The Captain’s),415,1.8,3.4,1.4,4.68,The Captain’s,",
-      "",
-      "Chip butty (The Captain’s),450,2,3,1,3.5,The Captain’s,",
-      "",
-      "Battered Mars bar (The Captain’s),350,5,30,0.3,3,The Captain’s,",
-      "",
-      "Ten onion rings (The Captain’s),300,1.5,3,0.8,2.5,The Captain’s,",
-      "",
-      "Salad in pitta (Herts Plaice),200,0.3,4,0.6,4,Herts Plaice,",
-      "",
-      "Chips in pitta (Herts Plaice),450,1.5,2,0.9,4,Herts Plaice,",
-      "",
-      "Chips in pitta and salad (Herts Plaice),470,1.5,4,0.9,5,Herts Plaice,",
-      "",
-      "Vegetarian kebab (Herts Plaice),300,1,5,1,4.9,Herts Plaice,",
-      "",
-      "Hummus with pitta (Herts Plaice),300,1,2,0.9,3.5,Herts Plaice,",
-      "",
-      "Onion rings (Herts Plaice),300,1.5,3,0.8,4,Herts Plaice,",
-      "",
-      "Garlic mushrooms (Herts Plaice),250,2,2,0.7,4.9,Herts Plaice,",
-      "",
-      "Small chips (Herts Plaice),400,1.5,0.5,0.5,3.2,Herts Plaice,",
-      "",
-      "Small chips with curry sauce (Herts Plaice),490,2,3.5,1.5,5.7,Herts Plaice,",
-      "",
-      "Large chips (Herts Plaice),650,2.5,0.8,0.8,4.2,Herts Plaice,",
-      "",
-      "Large chips with curry sauce (Herts Plaice),740,3,3.8,1.8,6.7,Herts Plaice,"
-    ],
-    "restaurantDate": "2026-11-13",
+    "restaurantItemsText": "",
+    "restaurantDate": "",
     "prepText": [
       "Diet Plant protein drink,92,0.2,0.1,0.86,0.93,other,",
       "Lotus Biscoff,74,1.2,6,0.14,0.11,other,",
@@ -1046,8 +1004,8 @@
     "prioritiseRestaurant": false,
     "prioritisePrep": false,
     "requirePrepCheck": false,
-    "includeOliveOilCheck": true,
+    "includeOliveOilCheck": false,
     "includeSpreadCheck": false,
-    "includeAvocadoCheck": false
+    "includeAvocadoCheck": true
   }
 }
