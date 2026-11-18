@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-17T10:07:43.557Z",
+  "saved_at_iso": "2026-11-18T12:08:18.074Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -969,24 +969,14 @@
       "Large classic plant-based veg supreme (Pizza Hut),1642,37,21,7.9,12.00,Pizza Hut,",
       "Large pan plant-based veg supreme (Pizza Hut),2186,40,16,8.6,12.00,Pizza Hut,"
     ],
-    "restaurantItemsText": [
-      "Cheap food",
-      "Small chips (The Captain’s),450,3.5,1,1,3.5,The Captain’s",
-      "Large chips (The Captain’s),750,6,2,1.7,4.95,The Captain’s",
-      "Small chips with curry sauce (The Captain’s),550,4,5,2.2,5.7,The Captain’s,",
-      "Large chips with curry sauce (The Captain’s),850,6.5,6,2.9,7.15,The Captain’s,",
-      "Half small chips with full curry sauce (The Captain’s),330,2.5,5,1.8,3.95,The Captain’s",
-      "Half large chips with full curry sauce (The Captain’s),480,3.5,5,2.1,4.68,The Captain’s,",
-      "Chip butty (The Captain’s),550,3.5,4,1.3,3.5,The Captain’s,",
-      "Battered Mars bar (The Captain’s),350,5,30,0.3,3,The Captain’s,",
-      "Ten onion rings (The Captain’s),350,3,5,1.2,2.5,The Captain’s,"
-    ],
-    "restaurantDate": "2026-11-17",
+    "restaurantItemsText": "",
+    "restaurantDate": "",
     "prepText": [
       "Diet Plant protein drink,92,0.2,0.1,0.86,0.93,other,",
       "Lotus Biscoff,74,1.2,6,0.14,0.11,other,",
       "KP original salted peanuts,185,2.4,1.5,0.36,0.65,other,",
       "Chunky Mexican-style chilli and bean soup,248,0.4,8.8,2,1.1,M&S,",
+      "Bake at home white baguette,324,0.4,4,1.22,1,Sainsbury's,",
       "Elizabeth Shaw mint crisp,31,1,3.3,0,0.19,other,",
       "Penguin Caramel,130,3.8,10.2,0.05,0.29,Sainsbury's,",
       "Coco Shreddies,369,0.8,22.2,0.61,0.58,other,",
@@ -995,7 +985,7 @@
       "Plant Pioneers spicy bean burgers x2,414,1.4,6,1.22,0.85,Sainsbury's,",
       "Oreos,104,1.2,7.8,0.2,0.21,other,",
       "Bendicks mint,49,1.28,6.14,0,0.36,other,",
-      ""
+      "Pumpkin katsu curry with rice,741,7.4,8.8,3.8,3.75,Sainsbury's,"
     ],
     "frozenText": [
       "Frozen broccoli florets,28,0.1,1.3,0.01,0.1,Sainsbury's,",
