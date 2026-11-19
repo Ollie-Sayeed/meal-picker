@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-19T20:32:50.312Z",
+  "saved_at_iso": "2026-11-19T20:33:40.061Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -969,27 +969,8 @@
       "Large classic plant-based veg supreme (Pizza Hut),1642,37,21,7.9,12.00,Pizza Hut,",
       "Large pan plant-based veg supreme (Pizza Hut),2186,40,16,8.6,12.00,Pizza Hut,"
     ],
-    "restaurantItemsText": [
-      "Cheap food",
-      "Small chips (The Captain’s),450,3.5,1,0.8,3.5,The Captain’s",
-      "Large chips (The Captain’s),750,6,2,1.3,4.95,The Captain’s",
-      "Small chips with curry sauce (The Captain’s),550,4,6,1.8,5.7,The Captain’s,",
-      "Large chips with curry sauce (The Captain’s),850,6.5,7,2.3,7.15,The Captain’s,",
-      "Half small chips with full curry sauce (The Captain’s),325,2.5,6,1.5,3.95,The Captain’s",
-      "Half large chips with full curry sauce (The Captain’s),475,3.5,6.5,1.8,4.68,The Captain’s,",
-      "Chip butty (The Captain’s),550,4,3,1.2,3.5,The Captain’s,",
-      "Battered Mars bar (The Captain’s),350,5,30,0.3,3,The Captain’s,",
-      "Ten onion rings (The Captain’s),350,3,5,1,2.5,The Captain’s",
-      "Vegan scallion pancake wrap (Cambridge),550,3,6,1.8,8,Cambridge,",
-      "Vegan banh mi (Cambridge),450,2,8,1.8,8,Cambridge,",
-      "Vegan jianbing (Cambridge),500,3,7,1.7,8,Cambridge,",
-      "Vegan hot dry noodles (Cambridge),600,3,5,2,8,Cambridge,",
-      "Large original falafel wrap (Cambridge),650,3.5,6,1.8,8,Cambridge,",
-      "Large classic falafel wrap (Cambridge),650,3.5,6,1.8,8,Cambridge,",
-      "Large fiery falafel wrap (Cambridge),675,3.5,7,2,8.5,Cambridge,",
-      "Large rainbow falafel wrap (Cambridge),650,3.5,8,1.8,8.5,Cambridge,"
-    ],
-    "restaurantDate": "2026-11-19",
+    "restaurantItemsText": "",
+    "restaurantDate": "",
     "prepText": [
       "Diet Plant protein drink,92,0.2,0.1,0.86,0.93,other,",
       "Lotus Biscoff,74,1.2,6,0.14,0.11,other,",
