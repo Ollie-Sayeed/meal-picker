@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-19T06:27:11.315Z",
+  "saved_at_iso": "2026-11-19T06:28:13.159Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -979,14 +979,8 @@
       "Half large chips with full curry sauce (The Captain’s),475,3.5,6.5,1.8,4.68,The Captain’s,",
       "Chip butty (The Captain’s),550,4,3,1.2,3.5,The Captain’s,",
       "Battered Mars bar (The Captain’s),350,5,30,0.3,3,The Captain’s,",
-      "Ten onion rings (The Captain’s),350,3,5,1,2.5,The Captain’s,",
-      "Salad in pitta (Herts Plaice),200,0.5,5,0.5,4,Herts Plaice,",
-      "Chips in pitta (Herts Plaice),550,4,3,1,4,Herts Plaice,",
-      "Chips in pitta and salad (Herts Plaice),575,4,5,1.1,5,Herts Plaice,",
-      "Vegetarian kebab (Herts Plaice),350,2,7,1.2,4.9,Herts Plaice,",
-      "Hummus with pitta (Herts Plaice),350,2,3,0.8,3.5,Herts Plaice,",
+      "Ten onion rings (The Captain’s),350,3,5,1,2.5,The Captain’s",
       "Onion rings (Herts Plaice),300,2.5,4,0.9,4,Herts Plaice,",
-      "Garlic mushrooms (Herts Plaice),300,3,3,0.9,4.9,Herts Plaice,",
       "",
       "Vegan scallion pancake wrap (Cambridge),550,3,6,1.8,8,Cambridge,",
       "Vegan banh mi (Cambridge),450,2,8,1.8,8,Cambridge,",
