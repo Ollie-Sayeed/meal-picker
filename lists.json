@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-19T06:28:13.159Z",
+  "saved_at_iso": "2026-11-19T06:28:19.533Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -980,8 +980,6 @@
       "Chip butty (The Captain’s),550,4,3,1.2,3.5,The Captain’s,",
       "Battered Mars bar (The Captain’s),350,5,30,0.3,3,The Captain’s,",
       "Ten onion rings (The Captain’s),350,3,5,1,2.5,The Captain’s",
-      "Onion rings (Herts Plaice),300,2.5,4,0.9,4,Herts Plaice,",
-      "",
       "Vegan scallion pancake wrap (Cambridge),550,3,6,1.8,8,Cambridge,",
       "Vegan banh mi (Cambridge),450,2,8,1.8,8,Cambridge,",
       "Vegan jianbing (Cambridge),500,3,7,1.7,8,Cambridge,",
