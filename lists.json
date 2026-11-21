@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-21T09:14:25.737Z",
+  "saved_at_iso": "2026-11-21T12:02:37.801Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -1004,7 +1004,7 @@
     "prioritisePrep": false,
     "requirePrepCheck": false,
     "includeOliveOilCheck": false,
-    "includeSpreadCheck": false,
-    "includeAvocadoCheck": true
+    "includeSpreadCheck": true,
+    "includeAvocadoCheck": false
   }
 }
