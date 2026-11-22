@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-22T11:05:51.194Z",
+  "saved_at_iso": "2026-11-22T21:24:21.278Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -969,8 +969,20 @@
       "Large classic plant-based veg supreme (Pizza Hut),1642,37,21,7.9,12.00,Pizza Hut,",
       "Large pan plant-based veg supreme (Pizza Hut),2186,40,16,8.6,12.00,Pizza Hut,"
     ],
-    "restaurantItemsText": "",
-    "restaurantDate": "",
+    "restaurantItemsText": [
+      "Salad in pitta (Herts Plaice),200,0.5,5,0.6,4,Herts Plaice,",
+      "Chips in pitta (Herts Plaice),500,3.5,3,1,4,Herts Plaice,",
+      "Chips in pitta and salad (Herts Plaice),530,3.5,5,1.1,5,Herts Plaice,",
+      "Vegetarian kebab (Herts Plaice),350,1.5,6,1.2,4.9,Herts Plaice,",
+      "Hummus with pitta (Herts Plaice),350,2,3,0.9,3.5,Herts Plaice,",
+      "Onion rings (Herts Plaice),300,2,4,0.9,4,Herts Plaice,",
+      "Garlic mushrooms (Herts Plaice),300,3,2,0.8,4.9,Herts Plaice,",
+      "Small chips (Herts Plaice),400,3,1,0.6,3.2,Herts Plaice,",
+      "Small chips with curry sauce (Herts Plaice),470,3.5,5,1.6,5.7,Herts Plaice,",
+      "Large chips (Herts Plaice),650,5,2,1,4.2,Herts Plaice,",
+      "Large chips with curry sauce (Herts Plaice),720,5.5,6,2,6.7,Herts Plaice,"
+    ],
+    "restaurantDate": "2026-11-22",
     "prepText": [
       "Diet Plant protein drink,92,0.2,0.1,0.86,0.93,other,",
       "Lotus Biscoff,74,1.2,6,0.14,0.11,other,",
