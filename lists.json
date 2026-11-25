@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-25T07:05:49.284Z",
+  "saved_at_iso": "2026-11-25T07:06:04.363Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -971,13 +971,7 @@
     ],
     "restaurantItemsText": [
       "Cheap food",
-      "Small chips (The Captain’s),450,2,0.5,0.5,3.7,The Captain’s",
-      "Large chips (The Captain’s),700,3,0.8,0.8,5.25,The Captain’s",
-      "Small chips with curry sauce (The Captain’s),550,2.5,4.5,1.5,6.3,The Captain’s,",
-      "Large chips with curry sauce (The Captain’s),800,3.5,4.8,1.8,7.85,The Captain’s,",
-      "Half small chips with full curry sauce (The Captain’s),325,1.5,4.3,1.3,4.45,The Captain’s",
       "Half large chips with full curry sauce (The Captain’s),450,2,4.4,1.4,5.23,The Captain’s,",
-      "Chip butty (The Captain’s),450,2,3,1,3.5,The Captain’s,",
       "Battered Mars bar (The Captain’s),350,5,30,0.4,3,The Captain’s,",
       "Ten onion rings (The Captain’s),300,2,3,0.8,2.95,The Captain’s,",
       "Four savoury straws (market),480,12,2,1.2,5,market,",
