@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-27T09:36:10.342Z",
+  "saved_at_iso": "2026-11-27T19:00:31.330Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -1011,7 +1011,6 @@
       ""
     ],
     "frozenText": [
-      "Frozen button sprouts,31,0.2,2.4,0.01,0.14,Sainsbury's,",
       "Frozen chopped spinach,20,0.1,0.4,0.08,0.14,Sainsbury's,",
       ""
     ],
