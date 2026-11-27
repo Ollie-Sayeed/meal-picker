@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "saved_at_iso": "2026-11-27T09:35:41.638Z",
+  "saved_at_iso": "2026-11-27T09:36:10.342Z",
   "form": {
     "itemsText": [
       "Meal items",
@@ -1023,7 +1023,7 @@
     ],
     "proteinSaltVersion": "low",
     "sortMode": "item_count",
-    "prioritiseRestaurant": false,
+    "prioritiseRestaurant": true,
     "prioritisePrep": false,
     "requirePrepCheck": false,
     "includeOliveOilCheck": false,
